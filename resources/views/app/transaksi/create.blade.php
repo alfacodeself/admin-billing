@@ -331,63 +331,104 @@
                                 <h4 class="card-title text-center font-weight-bold">Jenis Pembayaran</h4>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <table class="table table-hover table-stripped table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Jenis Pembayaran</th>
-                                                    <th>Banyak</th>
-                                                    <th>Harga</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse ($jenis_bayar as $jb)
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-stripped table-bordered">
+                                                <thead>
                                                     <tr>
-                                                        <th scope="row">{{ $loop->iteration }}</th>
-                                                        <td>{{ $jb->jenis_pembayaran }}</td>
-                                                        <td>
-                                                            1
-                                                        </td>
-                                                        <td>{{ $jb->jenis_biaya == 'f' ? 'Rp.' . number_format($jb->harga) : 'Rp.' . number_format(($jb->harga / 100) * $langganan->withmargin) }}
+                                                        <th>#</th>
+                                                        <th>Jenis Pembayaran</th>
+                                                        <th>Banyak</th>
+                                                        <th>Harga</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if ($langganan->tanggal_instalasi == null)
+                                                        @forelse ($jenis_bayar as $key => $jb)
+                                                            <tr>
+                                                                <th scope="row">{{ $loop->iteration }}</th>
+                                                                <td>{{ $jb->jenis_pembayaran }}</td>
+                                                                <td>
+                                                                    1
+                                                                </td>
+                                                                <td>{{ $jb->jenis_biaya == 'f' ? 'Rp.' . number_format($jb->harga) : 'Rp.' . number_format(($jb->harga / 100) * $langganan->withmargin) }}
+                                                                </td>
+                                                            </tr>
+                                                        @empty
+                                                            <tr>
+                                                                <td colspan="9" class="text-center">Belum ada
+                                                                    transaksi!</td>
+                                                            </tr>
+                                                        @endforelse
+                                                        <tr>
+                                                            <th scope="row">{{ count($jenis_bayar) + 1 }}</th>
+                                                            <td>{{ $langganan->nama_produk }}</td>
+                                                            <td>
+                                                                <input type="number" id="tagihan" class="form-control"
+                                                                    style="width: 60px" onchange="changePrice()" value="1"
+                                                                    max="{{ $langganan->sisa_tagihan }}" min="1"
+                                                                    name="jumlah_tagihan">
+                                                                @error('tagihan')
+                                                                    <strong>
+                                                                        <small class="text-danger">{{ $message }}</small>
+                                                                    </strong>
+                                                                @enderror
+                                                            </td>
+                                                            <td id="priceDinamis">
+                                                                {{ 'Rp.' . number_format($langganan->withmargin) }}
+                                                            </td>
+                                                        </tr>
+                                                    @else
+                                                        @forelse ($jenis_bayar as $key => $jb)
+                                                            @if ($key != 0)
+                                                                <tr>
+                                                                    <th scope="row">{{ $loop->iteration - 1 }}</th>
+                                                                    <td>{{ $jb->jenis_pembayaran }}</td>
+                                                                    <td>
+                                                                        1
+                                                                    </td>
+                                                                    <td>{{ $jb->jenis_biaya == 'f' ? 'Rp.' . number_format($jb->harga) : 'Rp.' . number_format(($jb->harga / 100) * $langganan->withmargin) }}
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                        @empty
+                                                            <tr>
+                                                                <td colspan="9" class="text-center">Belum ada
+                                                                    transaksi!</td>
+                                                            </tr>
+                                                        @endforelse
+                                                        <tr>
+                                                            <th scope="row">{{ count($jenis_bayar) }}</th>
+                                                            <td>{{ $langganan->nama_produk }}</td>
+                                                            <td>
+                                                                <input type="number" id="tagihan" class="form-control"
+                                                                    style="width: 60px" onchange="changePrice()" value="1"
+                                                                    max="{{ $langganan->sisa_tagihan }}" min="1"
+                                                                    name="jumlah_tagihan">
+                                                                @error('tagihan')
+                                                                    <strong>
+                                                                        <small class="text-danger">{{ $message }}</small>
+                                                                    </strong>
+                                                                @enderror
+                                                            </td>
+                                                            <td id="priceDinamis">
+                                                                {{ 'Rp.' . number_format($langganan->withmargin) }}
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                    <tr>
+                                                        <td colspan="4">
+                                                            <button type="button" id="btn-total"
+                                                                class="btn btn-info text-right" onclick="changeTotal()">Hitung
+                                                                Total</button>
                                                         </td>
                                                     </tr>
-                                                @empty
                                                     <tr>
-                                                        <td colspan="9" class="text-center">Belum ada
-                                                            transaksi!</td>
+                                                        <th colspan="3" class="font-weight-bold" scope="row">Total</th>
+                                                        <td id="totalDinamis">Rp.0</td>
                                                     </tr>
-                                                @endforelse
-                                                <tr>
-                                                    <th scope="row">{{ count($jenis_bayar) + 1 }}</th>
-                                                    <td>{{ $langganan->nama_produk }}</td>
-                                                    <td>
-                                                        <input type="number" id="tagihan" class="form-control"
-                                                            style="width: 60px" onchange="changePrice()" value="1"
-                                                            max="{{ $langganan->sisa_tagihan }}" min="1"
-                                                            name="jumlah_tagihan">
-                                                        @error('tagihan')
-                                                            <strong>
-                                                                <small class="text-danger">{{ $message }}</small>
-                                                            </strong>
-                                                        @enderror
-                                                    </td>
-                                                    <td id="priceDinamis">
-                                                        {{ 'Rp.' . number_format($langganan->withmargin) }}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="4">
-                                                        <button type="button" id="btn-total"
-                                                            class="btn btn-info text-right" onclick="changeTotal()">Hitung
-                                                            Total</button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th colspan="3" class="font-weight-bold" scope="row">Total</th>
-                                                    <td id="totalDinamis">Rp.0</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

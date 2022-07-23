@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Pelanggan\Auth\{LoginController, RegisterController};
 use App\Http\Controllers\Api\Pelanggan\{DokumenApiController, PelangganApiController};
+use App\Http\Controllers\TransaksiController;
 use App\Http\Resources\PelangganResource;
 use App\Models\Pelanggan;
 
@@ -26,9 +27,7 @@ Route::prefix('pelanggan')->group(function(){
     });
 });
 Route::get('pelanggan/all', function(){
-    // return (new PelangganResource(Pelanggan::get()))->additional([
-    //     "success" => true,
-    //     "message" => "Berhasil mengambil data pelanggan!"
-    // ]);
     return response()->json(Pelanggan::get());
 });
+Route::post('notification/transaction', [TransaksiController::class, 'notification']);
+

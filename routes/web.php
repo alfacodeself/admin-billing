@@ -61,7 +61,7 @@ Route::prefix('transaksi')->group(function(){
     Route::get('/', [TransaksiController::class, 'index'])->name('transaksi.index');
     Route::get('buat-transaksi', [TransaksiController::class, 'create'])->name('transaksi.create');
     Route::post('buat-transaksi/{kode}/store', [TransaksiController::class, 'store'])->name('transaksi.store');
-    Route::get('detail-transaksi', [TransaksiController::class, 'show'])->name('transaksi.show');
+    Route::get('detail-transaksi/{id}', [TransaksiController::class, 'show'])->name('transaksi.show');
 });
 Route::prefix('pengaturan')->group(function(){
     Route::prefix('dokumen')->group(function(){

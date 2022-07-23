@@ -37,37 +37,38 @@
                                     <th>#</th>
                                     <th>ID Transaksi</th>
                                     <th>Jenis Pembayaran</th>
-                                    <th>Status</th>
+                                    <th>Harga</th>
+                                    <th>Qty</th>
                                     <th>Tanggungan</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @forelse ($detail_transaksi as $dt)
                                 <tr>
-                                    <th scope="row">1</th>
-                                    <td>HHK9830138</td>
-                                    <td>Pemasangan Instalasi</td>
+                                    <th scope="row">{{ $loop->iteration }}</th>
+                                    <td>{{ $dt->transaksi->id_transaksi }}</td>
                                     <td>
-                                        <span class="badge badge-success">Lunas</span>
+                                        {{ $dt->jenis_pembayaran->jenis_pembayaran ?? $dt->transaksi->langganan->produk->nama_produk . ' | ' . $dt->transaksi->langganan->produk->kategori->nama_kategori }}
                                     </td>
-                                    <td>Rp.390,000</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">2</th>
-                                    <td>HHK9830138</td>
-                                    <td>Tagihan Produk Langganan</td>
+                                    <td>{{ 'Rp.' . number_format($dt->harga) }}</td>
+                                    <td>{{ $dt->qty }}</td>
+                                    <td>{{ 'Rp.' . number_format($dt->total_tanggungan) }}</td>
                                     <td>
-                                        <span class="badge badge-success">Lunas</span>
-                                    </td>
-                                    <td>Rp.390,000</td>
-                                </tr>
-                                <tr>
-                                    <th colspan="4">
-                                        <strong>Total Bayar</strong>
-                                    </th>
-                                    <td>
-                                        Rp.710.000
+                                        @if ($dt->transaksi->status_transaksi == "settlement" || $dt->transaksi->status_transaksi == "capture" || $dt->transaksi->status_transaksi == "refund")
+                                            <span class="badge badge-success">{{ $dt->transaksi->status_transaksi }}</span>
+                                        @elseif ($dt->transaksi->status_transaksi == "expire" || $dt->transaksi->status_transaksi == "deny" || $dt->transaksi->status_transaksi == "authorize" || $dt->transaksi->status_transaksi == "cancel" || $dt->transaksi->status_transaksi == "failure")
+                                            <span class="badge badge-danger">{{ $dt->transaksi->status_transaksi }}</span>
+                                        @elseif ($dt->transaksi->status_transaksi == "pending")
+                                            <span class="badge badge-warning">{{ $dt->transaksi->status_transaksi }}</span>
+                                        @else
+                                            <span class="badge badge-primary">{{ $dt->transaksi->status_transaksi }}</span>
+                                        @endif
                                     </td>
                                 </tr>
+                                @empty
+
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

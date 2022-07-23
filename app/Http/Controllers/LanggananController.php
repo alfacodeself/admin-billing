@@ -25,8 +25,7 @@ class LanggananController extends Controller
                     ->join('pelanggan', 'langganan.id_pelanggan', '=', 'pelanggan.id_pelanggan')
                     ->select('langganan.id_langganan', 'langganan.kode_langganan', 'langganan.alamat_pemasangan', 'langganan.status', 'langganan.histori', 'pelanggan.nama_pelanggan', 'produk.nama_produk', 'kategori.nama_kategori', 'jenis_langganan.lama_berlangganan')
                     ->where('detail_langganan.status', 'a')
-                    ->where('langganan.status', 'a')
-                    ->orWhere('langganan.status', 'n')
+                    ->where('langganan.status', '!=', 'pn')
                     ->get();
         return view('app.langganan.index', compact('langganan'));
     }

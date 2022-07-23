@@ -67,14 +67,14 @@
                                         @elseif ($t->status_transaksi == "pending")
                                             <span class="badge badge-warning">{{ $t->status_transaksi }}</span>
                                         @else
-                                            <span class="badge badge-primary">{{ $t->status_transaksi }}</span>    
+                                            <span class="badge badge-primary">{{ $t->status_transaksi }}</span>
                                         @endif
                                     </td>
                                     <td>
                                         {{ $t->tanggal_transaksi }}
                                     </td>
                                     <td>
-                                        <a href="{{ route('transaksi.show') }}" class="btn btn-link m-0 p-0">
+                                        <a href="{{ route('transaksi.show', $t->id_transaksi) }}" class="btn btn-link m-0 p-0">
                                             <i class="ti-eye text-primary font-weight-bold"></i>
                                         </a>
                                     </td>

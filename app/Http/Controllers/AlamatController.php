@@ -60,18 +60,22 @@ class AlamatController extends Controller
             $margin = DB::table('pengaturan_pembayaran')->select('harga_margin')->first();
             $langganan = DB::table('langganan')
                             ->join('produk', 'langganan.id_produk', '=', 'produk.id_produk')
+                            ->select('tanggal_instalasi')
                             ->selectRaw('produk.harga + ? AS withmargin', [$margin->harga_margin])
                             ->where('langganan.kode_langganan', $kode)
                             ->first();
             $jenis_bayar = DB::table('jenis_pembayaran')->select('harga', 'jenis_biaya')->where('status', 'a')->get();
             $totalHarga = 0;
-            foreach ($jenis_bayar as $jenis) {
-                if ($jenis->jenis_biaya == 'f') {
-                    $totalHarga += $jenis->harga;
-                }
-                else {
-                    $x = $jenis->harga / 100 * $langganan->withmargin;
-                    $totalHarga += $x;
+            $langganan->tanggal_instalasi == null ? $index = 0 : $index = 1;
+            foreach ($jenis_bayar as $key => $jenis) {
+                if ($key >= $index) {
+                    if ($jenis->jenis_biaya == 'f') {
+                        $totalHarga += $jenis->harga;
+                    }
+                    else {
+                        $x = $jenis->harga / 100 * $langganan->withmargin;
+                        $totalHarga += $x;
+                    }
                 }
             }
             $a = $langganan->withmargin * $request->tagihan;
