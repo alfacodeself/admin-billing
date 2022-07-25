@@ -168,7 +168,8 @@ class LanggananController extends Controller
                 'pesan' => 'Selamat! Pengajuan anda telah diterima, Langganan telah aktif.',
                 'status' => 'a',
                 'tanggal_verifikasi' => Carbon::now(),
-                'histori' => $langganan->histori . '|Melakukan Pembayaran'
+                'histori' => $langganan->histori . '|Melakukan Pembayaran',
+                'pesan' => 'Langganan telah disetujui! Harap segera melakukan pembayaran!'
             ]);
             return redirect()->route('langganan.verifikasi.index')->with('success', 'Berhasil menerima langganan!');
         } catch (\Throwable $th) {

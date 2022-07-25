@@ -18,11 +18,13 @@ class PelangganResource extends JsonResource
 
             "id" => $this->id_pelanggan,
             "nama" => $this->nama_pelanggan,
+            "email" => $this->email,
             "nik" => $this->nik,
             "foto" => url($this->foto),
             "jenis_kelamin" => $this->jenis_kelamin == "l" ? "Laki-Laki" : "Perempuan",
             "nomor_hp" => '+' . $this->nomor_hp,
             "alamat" => $this->alamat,
+            "kode_pos" => $this->desa->kode_pos ?? null,
             "desa" => $this->desa->nama_desa ?? null,
             "kecamatan" => $this->desa->kecamatan->nama_kecamatan ?? null,
             "kabupaten" => $this->desa->kecamatan->kabupaten->nama_kabupaten ?? null,

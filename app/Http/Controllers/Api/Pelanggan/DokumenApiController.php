@@ -20,10 +20,8 @@ class DokumenApiController extends Controller
             foreach ($pelanggan->dokumen_pelanggan as $dokumen) {
                 array_push($dok, [
                     "id_dokumen" => $dokumen->id_dokumen_pelanggan,
-                    "jenis_dokumen" => [
-                        "id_jenis_dokumen" => $dokumen->jenis_dokumen->id_jenis_dokumen,
-                        "jenis_dokumen" => $dokumen->jenis_dokumen->nama_dokumen
-                    ],
+                    "id_jenis_dokumen" => $dokumen->jenis_dokumen->id_jenis_dokumen,
+                    "jenis_dokumen" => $dokumen->jenis_dokumen->nama_dokumen,
                     "url" => url($dokumen->path_dokumen)
                 ]);
             }
@@ -39,6 +37,26 @@ class DokumenApiController extends Controller
             return response()->json([
                 "status" => false,
                 "message" => "Gagal memuat dokumen pelanggan",
+                "errors" => $th->getMessage()
+            ]);
+        }
+    }
+    public function dokumen()
+    {
+        try {
+            $jenis_dokumen = JenisDokumen::select('id_jenis_dokumen', 'nama_dokumen')->where('status', 'a')->where('status_dokumen', 'p')->get()->map(function($jenis) {
+                $jenis->name = Str::lower(str_replace(' ', '_', $jenis->nama_dokumen));
+                return $jenis;
+            });
+            return response()->json([
+                "status" => true,
+                "message" => "Berhasil mengambil syarat dokumen!",
+                "data" => $jenis_dokumen
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                "status" => false,
+                "message" => "Gagal mengambil syarat dokumen!",
                 "errors" => $th->getMessage()
             ]);
         }
@@ -112,10 +130,6 @@ class DokumenApiController extends Controller
                         $store = $request->file($name)->storeAs('public/document/pelanggan', $doc);
                         $path = Storage::url($store);
                         $d->update(['path_dokumen' => $path]);
-                        return response()->json([
-                            "status" => true,
-                            "message" => "Berhasil mengubah dokumen " . $dokumen->nama_dokumen . " pelanggan."
-                        ]);
                     }else {
                         $checkDok = DB::table('dokumen_pelanggan')->select(DB::raw('MAX(RIGHT(id_dokumen_pelanggan, 5)) AS kode'));
                         if ($checkDok->count() > 0) {
@@ -136,13 +150,13 @@ class DokumenApiController extends Controller
                             'id_jenis_dokumen' => $dokumen->id_jenis_dokumen,
                             'path_dokumen' => $path
                         ]);
-                        return response()->json([
-                            "status" => true,
-                            "message" => "Berhasil menambah dokumen ". $dokumen->nama_dokumen ." pelanggan"
-                        ]);
                     }
                 }
             }
+            return response()->json([
+                "status" => true,
+                "message" => "Berhasil mengubah dokumen pelanggan"
+            ]);
         } catch (\Throwable $th) {
             return response()->json([
                 "status" => false,
