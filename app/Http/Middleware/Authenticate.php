@@ -14,9 +14,9 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
-        // if (!$request->isJson()) {
-        //     return route('login');
-        // }
-        return $request->expectsJson() ? response()->json(['message' => 'Unauthenticated'], 401) : redirect()->guest(route('login'));
+        if (!$request->isJson()) {
+            return route('login');
+        }
+        // return $request->expectsJson() ? response()->json(['message' => 'Unauthenticated'], 401) : redirect()->guest(route('login'));
     }
 }

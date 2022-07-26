@@ -125,8 +125,7 @@ class PelangganController extends Controller
             $pelanggan->update(['foto' => $path]);
             return redirect()->route('pelanggan.show', $pelanggan->id_pelanggan)->with('success', 'Berhasil mengubah foto pelanggan!');
         } catch (\Throwable $th) {
-            return $th->getMessage();
-            return redirect()->route('pelanggan.create')->with('error', 'Gagal menambah pelanggan ' . $th->getMessage());
+            return redirect()->route('pelanggan.show', $pelanggan->id_pelanggan)->with('error', 'Gagal mengubah foto pelanggan! ' . $th->getMessage());
         }
     }
     public function updateProfil(Request $request, $id)
@@ -166,8 +165,7 @@ class PelangganController extends Controller
             ]);
             return redirect()->route('pelanggan.show', $pelanggan->id_pelanggan)->with('success', 'Berhasil mengubah profil pelanggan!');
         } catch (\Throwable $th) {
-            return $th->getMessage();
-            return redirect()->route('pelanggan.create')->with('error', 'Gagal menambah pelanggan ' . $th->getMessage());
+            return redirect()->route('pelanggan.show', $pelanggan->id_pelanggan)->with('error', 'mengubah profil pelanggan! ' . $th->getMessage());
         }
     }
     public function updateDokumen(Request $request, $id)
@@ -211,8 +209,7 @@ class PelangganController extends Controller
             }
             return redirect()->route('pelanggan.show', $pelanggan->id_pelanggan)->with('success', 'Berhasil mengubah dokumen pelanggan!');
         } catch (\Throwable $th) {
-            return $th->getMessage();
-            return redirect()->route('pelanggan.create')->with('error', 'Gagal menambah pelanggan ' . $th->getMessage());
+            return redirect()->route('pelanggan.show', $pelanggan->id_pelanggan)->with('error', 'Gagal mengubah dokumen pelanggan ' . $th->getMessage());
         }
     }
     public function destroy($id)
@@ -224,9 +221,9 @@ class PelangganController extends Controller
                 if ($dokumen->path_dokumen !== null) @unlink(public_path($dokumen->path_dokumen));
             }
             $pelanggan->delete();
-            return redirect()->route('pelanggan.index', $pelanggan->id_pelanggan)->with('success', 'Berhasil menghapus pelanggan!');
+            return redirect()->route('pelanggan.index')->with('success', 'Berhasil menghapus pelanggan!');
         } catch (\Throwable $th) {
-            return $th->getMessage();
+            return redirect()->route('pelanggan.index')->with('error', 'Gagal menghapus pelanggan ' . $th->getMessage());
         }
     }
 }

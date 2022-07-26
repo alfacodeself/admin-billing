@@ -6,7 +6,7 @@
     <div class="col-lg-8 p-r-0 title-margin-right">
         <div class="page-header">
             <div class="page-title">
-                <h1>Hi, <span>Welcome Alfa Code As Super Admin</span></h1>
+                <h1>Selamat datang {{ Auth::user()->nama_petugas }}</h1>
             </div>
         </div>
     </div>

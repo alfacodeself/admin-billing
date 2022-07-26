@@ -79,7 +79,7 @@
                     </div>
                     <div class="dropdown dib">
                         <div class="header-icon" data-toggle="dropdown">
-                            <span class="user-avatar">Alfa Code
+                            <span class="user-avatar">{{ Auth::user()->nama_petugas }}
                                 <i class="ti-angle-down f-s-10"></i>
                             </span>
                             <div class="drop-down dropdown-profile dropdown-menu dropdown-menu-right">
@@ -88,18 +88,6 @@
                                 </div>
                                 <div class="dropdown-content-body">
                                     <ul>
-                                        <li>
-                                            <a href="#">
-                                                <i class="ti-user"></i>
-                                                <span>Profile</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <i class="ti-settings"></i>
-                                                <span>Account Setting</span>
-                                            </a>
-                                        </li>
                                         <li>
                                             <a href="#">
                                                 <i class="ti-power-off"></i>

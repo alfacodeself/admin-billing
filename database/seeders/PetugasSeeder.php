@@ -47,6 +47,7 @@ class PetugasSeeder extends Seeder
             'email' => 'superadmin@example.com',
             'password' => bcrypt('superadmin1234')
         ]);
+        
         DetailJabatan::create([
             'id_detail_jabatan' => 'DJ0001',
             'id_jenis_jabatan' => $sales->id_jenis_jabatan,

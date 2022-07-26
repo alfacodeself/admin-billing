@@ -25,6 +25,7 @@ Route::prefix('pelanggan')->group(function(){
             Route::put('update-langganan/{kode}', [LanggananApiController::class, 'update']);
             Route::get('detail-langganan/{id}', [LanggananApiController::class, 'show']);
             Route::get('jenis-langganan', [LanggananApiController::class, 'jenis_langganan']);
+            Route::get('transaksi-langganan/{kode}', [LanggananApiController::class, 'transaksiLangganan']);
         });
         Route::prefix('dokumen')->group(function(){
             Route::get('/', [DokumenApiController::class, 'index']);

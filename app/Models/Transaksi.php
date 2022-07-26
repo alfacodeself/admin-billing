@@ -15,6 +15,10 @@ class Transaksi extends Model
     protected $keyType = 'string';
     public $timestamps = false;
 
+    protected $hidden = [
+        'kode_pesanan',
+        'kode_toko'
+    ];
     public function metode_pembayaran()
     {
         return $this->belongsTo(MetodePembayaran::class, 'id_metode_pembayaran');

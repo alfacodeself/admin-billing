@@ -2,14 +2,9 @@
 
 namespace App\Http\Controllers\Api\Pelanggan;
 
-use Carbon\Carbon;
-use App\Models\Desa;
-use App\Models\Produk;
-use App\Models\Langganan;
+use App\Models\{Desa, Produk, Langganan, JenisLangganan, DetailLangganan};
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\JenisLangganan;
-use App\Models\DetailLangganan;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LanggananResource;
@@ -167,7 +162,7 @@ class LanggananApiController extends Controller
                         ->join('kabupaten', 'kecamatan.id_kabupaten', '=', 'kabupaten.id_kabupaten')
                         ->join('provinsi', 'kabupaten.id_provinsi', '=', 'provinsi.id_provinsi')
                         ->join('pelanggan', 'langganan.id_pelanggan', '=', 'pelanggan.id_pelanggan')
-                        ->select('langganan.id_langganan', 'langganan.kode_langganan', 'produk.nama_produk', 'kategori.nama_kategori', 'langganan.status AS status_langganan', 'langganan.tanggal_verifikasi', 'langganan.tanggal_instalasi', 'langganan.histori', 'langganan.alamat_pemasangan', 'provinsi.nama_provinsi', 'kabupaten.nama_kabupaten', 'kecamatan.nama_kecamatan', 'desa.nama_desa', 'langganan.rt', 'langganan.rw', 'desa.kode_pos')
+                        ->select('langganan.id_langganan', 'langganan.kode_langganan', 'produk.nama_produk', 'kategori.nama_kategori', 'langganan.status AS status_langganan', 'langganan.tanggal_verifikasi', 'langganan.tanggal_instalasi', 'langganan.histori', 'langganan.alamat_pemasangan', 'provinsi.nama_provinsi', 'kabupaten.nama_kabupaten', 'kecamatan.nama_kecamatan', 'desa.nama_desa', 'langganan.rt', 'langganan.rw', 'desa.kode_pos', 'langganan.latitude', 'langganan.longitude')
                         ->selectRaw('produk.harga + ? AS withmargin', [$margin->harga_margin ?? 0])
                         ->where('langganan.id_langganan', $id)
                         ->where('langganan.id_pelanggan', auth()->id())
@@ -209,8 +204,11 @@ class LanggananApiController extends Controller
             'longitude' => 'nullable'
         ]);
         try {
+            // Cek langganan
             $langganan = Langganan::where('kode_langganan', $kode)->firstOrFail();
+            // Cek detail langganan
             $detail_langganan = DetailLangganan::where('id_langganan', $langganan->id_langganan)->where('status', 'a')->firstOrFail();
+            // Kalau status langganan bukan pengajuan atau ditolak
             if ($langganan->status != 'pn' && $langganan->status != 'dt') {
                 return response()->json([
                     'status' => false,
@@ -218,39 +216,67 @@ class LanggananApiController extends Controller
                     'errors' => ['Langganan bukan dalam pengajuan atau sedang ditolak!']
                 ], Response::HTTP_BAD_REQUEST);
             }
-            $produk = Produk::where('id_produk', $valid['produk'])->where('status', 'a')->first();
-            $pelanggan = auth()->guard('pelanggan')->user();
-            foreach ($pelanggan->langganan as $langganan) {
-                if ($langganan->produk->kategori == $produk->kategori && $langganan->produk->id_produk != $produk->id_produk) {
+            // Kalau ada produk
+            if ($request->has('produk')) {
+                $produk = Produk::where('id_produk', $valid['produk'])->where('status', 'a')->first();
+                // Kalau produk ga ditemukan
+                if ($produk == null) {
                     return response()->json([
                         'status' => false,
                         'message' => 'Gagal membuat langganan.',
-                        'errors' => ['Anda tidak bisa mengajukan langganan dengan jenis produk yang sama!']
+                        'errors' => ['Produk tidak ditemukan!']
+                    ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                }
+                $pelanggan = auth()->guard('pelanggan')->user();
+                // Valid agar pelanggan tidak dapat memilih kategori yang sama kecuali produk sebelumnya
+
+                foreach ($pelanggan->langganan as $l) {
+                    if ($l->produk->kategori == $produk->kategori && $l->produk->id_produk != $produk->id_produk) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Gagal membuat langganan.',
+                            'errors' => ['Anda tidak bisa mengajukan langganan dengan jenis produk yang sama!']
+                        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                    }
+                }
+            }
+            // Kalau ada jenis langganan
+            if ($request->has('jenis_langganan')) {
+                $jenis_langganan = JenisLangganan::where('id_jenis_langganan', $valid['jenis_langganan'])->where('status', 'a')->first();
+                // Kalau jenis langganan ga ditemukan
+                if ($jenis_langganan == null) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Gagal membuat langganan.',
+                        'errors' => ['Jenis langganan tidak ditemukan!']
                     ], Response::HTTP_UNPROCESSABLE_ENTITY);
                 }
             }
-            $jenis_langganan = JenisLangganan::where('id_jenis_langganan', $valid['jenis_langganan'])->where('status', 'a')->first();
-            $desa = Desa::where('id_desa', $valid['desa'])->where('status', 'a')->first();
-            if ($produk == null || $jenis_langganan == null || $desa == null) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Gagal membuat langganan.',
-                    'errors' => ['Produk, jenis berlangganan, atau desa tidak ditemukan!']
-                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            if ($request->has('desa')) {
+                $desa = Desa::where('id_desa', $valid['desa'])->where('status', 'a')->first();
+                if ($desa == null) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Gagal membuat langganan.',
+                        'errors' => ['Desa tidak ditemukan!']
+                    ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                }
             }
             $langganan->update([
-                'id_produk' => $produk->id_produk,
-                'alamat_pemasangan' => $request->alamat,
-                'id_desa' => $desa->id_desa,
-                'rt' => $request->rt,
-                'rw' => $request->rw,
-                'latitude' => $request->latitude,
-                'longitude' => $request->longitude,
+                'id_produk' => $produk->id_produk ?? $langganan->id_produk,
+                'alamat_pemasangan' => $request->alamat == null ? $langganan->alamat_pemasangan : $valid['alamat'],
+                'id_desa' => $desa->id_desa ?? $langganan->id_desa,
+                'rt' => $request->rt == null ? $langganan->rt : $valid['rt'],
+                'rw' => $request->rw == null ? $langganan->rw : $valid['rw'],
+                'latitude' => $request->latitude == null ? $langganan->latitude : $valid['latitude'],
+                'longitude' => $request->longitude == null ? $langganan->longitude : $valid['longitude'],
             ]);
-            $detail_langganan->update([
-                'id_jenis_langganan' => $jenis_langganan->id_jenis_langganan,
-                'sisa_tagihan' => $jenis_langganan->banyak_tagihan,
-            ]);
+            if ($request->has('jenis_langganan')) {
+                $detail_langganan->update([
+                    'id_jenis_langganan' => $jenis_langganan->id_jenis_langganan,
+                    'sisa_tagihan' => $jenis_langganan->banyak_tagihan,
+                ]);
+            }
             return response()->json([
                 'status' => true,
                 'message' => 'Berhasil mengubah langganan!'
@@ -261,6 +287,30 @@ class LanggananApiController extends Controller
                 'message' => 'Gagal mengubah langganan',
                 'errors' => [$th->getMessage()]
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    public function transaksiLangganan($kode)
+    {
+        try {
+            $langganan = Langganan::where('kode_langganan', $kode)->where('id_pelanggan', auth()->id())->firstOrFail();
+            $transaksi = $langganan->transaksi->load('detail_transaksi', 'metode_pembayaran', 'petugas', 'langganan')->map(function($trx) {
+                $trx->detail_transaksi->map(function($detTrx) use ($trx){
+                    return $detTrx->nama_pembayaran = $detTrx->id_jenis_pembayaran == null ? $trx->langganan->produk->nama_produk : $detTrx->jenis_pembayaran->jenis_pembayaran;
+                });
+                $trx->metode_pembayaran->logo = url($trx->metode_pembayaran->logo);
+                return $trx;
+            });
+            return response()->json([
+                'status' => true,
+                'message' => 'Berhasil memuat transaksi langganan!',
+                'data' => $transaksi
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Gagal memuat transaksi langganan!',
+                'errors' => [$th->getMessage()]
+            ], 500);
         }
     }
 }
