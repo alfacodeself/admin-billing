@@ -88,12 +88,15 @@
                                 </div>
                                 <div class="dropdown-content-body">
                                     <ul>
-                                        <li>
-                                            <a href="#">
-                                                <i class="ti-power-off"></i>
-                                                <span>Logout</span>
-                                            </a>
-                                        </li>
+                                        <form action="{{ route('logout') }}" method="post" id="logout" class="d-inline">
+                                            @csrf
+                                            <li>
+                                                <a href="" onclick="$('#logout').submit()">
+                                                    <i class="ti-power-off"></i>
+                                                    <span>Log Out</span>
+                                                </a>
+                                            </li>
+                                        </form>
                                     </ul>
                                 </div>
                             </div>

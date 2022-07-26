@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\{AlamatController, BagiHasilController, DashboardController, KategoriController, LanggananController, MetodePembayaranController, MitraController, PelangganController, PetugasController, ProdukController, TagihanController, TransaksiController};
-use App\Http\Controllers\Auth\{LoginController, ResetPasswordController, VerifikasiEmailController};
+use App\Http\Controllers\Auth\{LoginController, LogoutController, ResetPasswordController, VerifikasiEmailController};
 use App\Http\Controllers\Pengaturan\{DokumenController, PembayaranController, ProfilController};
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +18,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('logout', LogoutController::class)->name('logout');
     Route::get('/', DashboardController::class)->name('dashboard');
     Route::prefix('kategori')->group(function () {
         Route::get('/', [KategoriController::class, 'index'])->name('kategori.index');
