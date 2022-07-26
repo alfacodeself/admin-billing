@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Log In</title>
+    <title>Setel Ulang Password</title>
     @include('layouts.style')
     <style>
     </style>
@@ -21,36 +21,28 @@
                             <img class="rounded mx-auto d-block"
                                 src="https://freelogovector.net/wp-content/uploads/logo-images-13/microsoft-cortana-logo-vector-73233.png"
                                 alt="" width=70px height=70px>
-                            <p class="text-center text-uppercase mt-3">Login</p>
+                            <p class="text-center text-uppercase mt-3">Reset Password</p>
                             @include('partials.my-alert')
-                            <form class="form text-center" action="{{ route('login') }}" method="POST">
+                            <form class="form text-center" action="{{ route('reset_password.post') }}" method="POST">
                                 @csrf
                                 @method('POST')
+                                <input type="hidden" value="{{ $reset->token }}" name="token">
                                 <div class="form-group input-group-md">
-                                    <input type="email" class="form-control @error('email')is-invalid @enderror" name="email" id="email"
-                                        placeholder="Masukkan Email">
-                                    @error('email')
+                                    <input type="password" class="form-control @error('new_password')is-invalid @enderror" name="new_password" id="new_password"
+                                        placeholder="Masukkan Password Baru Anda">
+                                    @error('new_password')
                                     <div class="invalid-feedback">
                                         {{$message}}
                                     </div>
                                     @enderror
                                 </div>
                                 <div class="form-group input-group-md">
-                                    <input type="password" class="form-control @error('password')is-invalid @enderror" id="password" name="password"
-                                        placeholder="Masukkan Password">
-                                    @error('password')
-                                    <div class="invalid-feedback">
-                                        {{$message}}
-                                    </div>
-                                    @enderror
+                                    <input type="password" class="form-control" name="new_password_confirmation" id="new_password_confirmation"
+                                        placeholder="Konfirmasi Password Baru Anda">
                                 </div>
                                 <button class="btn btn-block btn-primary mt-4" type="submit">
-                                    Login
+                                    Ubah Password Anda
                                 </button>
-                                @if (session('verify'))
-                                <a href="{{ route('verifikasi-email') }}" class="float-left mt-2">Kirim ulang email verifikasi! </a>
-                                @endif
-                                <a href="{{ route('reset-password.email') }}" class="float-right mt-2">Lupa Password? </a>
                             </form>
                         </div>
                     </div>

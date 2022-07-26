@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\{AlamatController, BagiHasilController, DashboardController, KategoriController, LanggananController, MetodePembayaranController, MitraController, PelangganController, PetugasController, ProdukController, TagihanController, TransaksiController};
-use App\Http\Controllers\Auth\{LoginController, VerifikasiEmailController};
+use App\Http\Controllers\Auth\{LoginController, ResetPasswordController, VerifikasiEmailController};
 use App\Http\Controllers\Pengaturan\{DokumenController, PembayaranController, ProfilController};
 use Illuminate\Support\Facades\Route;
 
@@ -11,6 +11,10 @@ Route::middleware('guest')->group(function () {
     Route::get('verifikasi-email', [VerifikasiEmailController::class, 'verifikasi'])->name('verifikasi-email');
     Route::post('verifikasi-email', [VerifikasiEmailController::class, 'verify']);
     Route::get('verifikasi-email/{token}/aktivasi', [VerifikasiEmailController::class, 'proses_verifikasi'])->name('verifikasi-email.verify');
+    Route::get('email-reset-password', [ResetPasswordController::class, 'email_reset'])->name('reset-password.email');
+    Route::post('email-reset-password', [ResetPasswordController::class, 'email_reset_post']);
+    Route::get('reset-password/{token}/set-password', [ResetPasswordController::class, 'reset_password'])->name('reset_password');
+    Route::post('reset-password/store/set-password', [ResetPasswordController::class, 'reset_password_post'])->name('reset_password.post');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

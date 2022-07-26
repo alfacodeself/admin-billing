@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Log In</title>
+    <title>Email Reset Password</title>
     @include('layouts.style')
     <style>
     </style>
@@ -21,9 +21,9 @@
                             <img class="rounded mx-auto d-block"
                                 src="https://freelogovector.net/wp-content/uploads/logo-images-13/microsoft-cortana-logo-vector-73233.png"
                                 alt="" width=70px height=70px>
-                            <p class="text-center text-uppercase mt-3">Login</p>
+                            <p class="text-center text-uppercase mt-3">Email Reset Password</p>
                             @include('partials.my-alert')
-                            <form class="form text-center" action="{{ route('login') }}" method="POST">
+                            <form class="form text-center" action="{{ route('reset-password.email') }}" method="POST">
                                 @csrf
                                 @method('POST')
                                 <div class="form-group input-group-md">
@@ -35,22 +35,9 @@
                                     </div>
                                     @enderror
                                 </div>
-                                <div class="form-group input-group-md">
-                                    <input type="password" class="form-control @error('password')is-invalid @enderror" id="password" name="password"
-                                        placeholder="Masukkan Password">
-                                    @error('password')
-                                    <div class="invalid-feedback">
-                                        {{$message}}
-                                    </div>
-                                    @enderror
-                                </div>
                                 <button class="btn btn-block btn-primary mt-4" type="submit">
-                                    Login
+                                    Kirim Email Reset Password
                                 </button>
-                                @if (session('verify'))
-                                <a href="{{ route('verifikasi-email') }}" class="float-left mt-2">Kirim ulang email verifikasi! </a>
-                                @endif
-                                <a href="{{ route('reset-password.email') }}" class="float-right mt-2">Lupa Password? </a>
                             </form>
                         </div>
                     </div>

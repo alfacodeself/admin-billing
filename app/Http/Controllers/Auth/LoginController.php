@@ -24,7 +24,9 @@ class LoginController extends Controller
             'password.min' => 'Password minimal 5 karakter'
         ]);
         try {
-            Auth::attempt($credential);
+            if (!Auth::attempt($credential)) {
+                return back()->with('danger', 'Invalid Credential');
+            }
             return redirect()->intended(route('dashboard'));
         } catch (\Throwable $th) {
             return back()->with('danger', $th->getMessage());
