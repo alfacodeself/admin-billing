@@ -176,4 +176,46 @@ class LanggananController extends Controller
             return back()->with('danger', 'Gagal menerima langganan! ' . $th->getMessage());
         }
     }
+    public function schedule()
+    {
+        $schedule = Langganan::with('pelanggan', 'desa')->where('tanggal_instalasi', '!=', null)->where('status', 'pmi')->get();
+        $data = [];
+        $today = Carbon::parse(date_create(now('+0700')))->format('Y-m-d');
+        foreach ($schedule as $s) {
+            $color = '';
+            $desc = '';
+            if ($s->tanggal_instalasi < $today) {
+                $color = '#FC766AFF';
+                $desc = 'Harap lakukan instalasi!';
+            }
+            elseif($s->tanggal_instalasi > $today) {
+                $color = '#184A45FF';
+                $desc = 'Instalasi belum dimulai!';
+            }else {
+                $color = 'green';
+                $desc = 'Ada jadwal instalasi hari ini!';
+            }
+            array_push($data, [
+                'title' => $s->pelanggan->nama_pelanggan,
+                'backgroundColor' => $color,
+                'borderColor' => $s->tanggal_instalasi < $today ? 'red' : 'green',
+                'start' => $s->tanggal_instalasi,
+                'end' => $s->tanggal_instalasi,
+                'address' => $s->alamat_pemasangan,
+                'desa' => $s->desa->nama_desa,
+                'kecamatan' => $s->desa->kecamatan->nama_kecamatan,
+                'kabupaten' => $s->desa->kecamatan->kabupaten->nama_kabupaten,
+                'provinsi' => $s->desa->kecamatan->kabupaten->provinsi->nama_provinsi,
+                'rtrw' => $s->rt . '/' . $s->rw,
+                'kodepos' => $s->desa->kode_pos,
+                'lat' => $s->latitude,
+                'long' => $s->longitude,
+                'avatar' => url($s->pelanggan->foto),
+                'subscription_id' => 'ID Langganan - ' . $s->kode_langganan,
+                'note' => 'Catatan : ' . $desc,
+            ]);
+        }
+        $data = json_encode($data);
+        return view('app.langganan.jadwal', compact('data', 'today'));
+    }
 }

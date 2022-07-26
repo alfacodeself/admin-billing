@@ -31,7 +31,7 @@
                     <ul>
                         <li><a href="{{ route('langganan.index') }}">Data Langganan</a></li>
                         <li><a href="{{ route('langganan.verifikasi.index') }}">Verifikasi Langganan</a></li>
-                        <li><a href="#">Jadwal Instalasi</a></li>
+                        <li><a href="{{ route('langganan.schedule') }}">Jadwal Instalasi</a></li>
                     </ul>
                 </li>
                 <li><a href="{{ route('transaksi.index') }}"><i class="ti-credit-card"></i> Transaksi </a></li>
