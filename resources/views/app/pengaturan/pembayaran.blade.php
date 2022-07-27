@@ -296,6 +296,7 @@
                                 <option value="Bank Transfer">Bank Transfer</option>
                                 <option value="E Money">E Money</option>
                                 <option value="Direct Debit">Direct Debit</option>
+                                <option value="Billing">Billing</option>
                             </select>
                             @error('metode-bayar')
                                 <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
@@ -341,6 +342,7 @@
                                 <option value="Bank Transfer">Bank Transfer</option>
                                 <option value="E Money">E Money</option>
                                 <option value="Direct Debit">Direct Debit</option>
+                                <option value="Billing">Billing</option>
                             </select>
                             @error('metode-bayar')
                                 <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>

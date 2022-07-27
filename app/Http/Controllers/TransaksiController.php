@@ -136,20 +136,27 @@ class TransaksiController extends Controller
             // Push total dari harga produk
             $totalHarga += $a;
             // Push ke midtrans dan masukan response ke $res
-            $res = $payment->bca($totalHarga, $metode->via, $items, $user);
+            if ($metode->via == 'echannel' || $metode->via == 'permata') {
+                $res = $payment->bank2($totalHarga, $metode->via, $items, $user);
+            }elseif ($metode->via == 'admin') {
+                $res = $payment->billing($totalHarga, $langganan, $request->jumlah_tagihan);
+            }else {
+                $res = $payment->bank2($totalHarga, $metode->via, $items, $user);
+            }
             // Push ke table transaksi
             $transaksi = Transaksi::create([
                 'id_transaksi' => $res['order_id'],
                 'id_metode_pembayaran' => $metode->id_metode_pembayaran,
                 'id_langganan' => $langganan->id_langganan,
-                'id_petugas' => null,
+                'id_petugas' => $metode->via != 'admin' ? null : auth()->id(),
                 'kode_pesanan' => $res['transaction_id'],
                 'kode_toko' => $res['merchant_id'],
                 'total_bayar' => $res['gross_amount'],
-                'nomor_va' => $res['va_numbers'][0]['va_number'],
+                'nomor_va' => $metode->via == 'admin' ? null : $res['va_numbers'][0]['va_number'],
                 'status_transaksi' => $res['transaction_status'],
                 'status_fraud' => $res['fraud_status'],
-                'tanggal_transaksi' => Carbon::parse($res['transaction_time'])
+                'tanggal_transaksi' => Carbon::parse($res['transaction_time']),
+                'tanggal_lunas' => $metode->via == 'admin' ? null : Carbon::parse($res['transaction_time'])
             ]);
             foreach ($jenis_bayar as $key => $jenis) {
                 if ($key >= $index) {
