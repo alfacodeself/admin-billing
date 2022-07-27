@@ -1,44 +1,35 @@
 @extends('layouts.app')
 @section('content')
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box">
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">E-Billing</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('langganan.index') }}">Langganan</a></li>
-                            <li class="breadcrumb-item active">Jadwal Pemasangan Instalasi</li>
-                        </ol>
-                    </div>
-                    <h4 class="page-title">Jadwal</h4>
+    <div class="row">
+        <div class="col-lg-8 p-r-0 title-margin-right">
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>Jadwal Pemasangan Instalasi</h1>
                 </div>
             </div>
         </div>
-        @include('partials.my-alert')
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card-box">
-                    <h4 class="header-title">
-                        Jadwal Pemasangan Instalasi
-                    </h4>
-                    <p class="sub-header">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, soluta.
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div id="calendar-schedule"></div>
-                    </div>
+        <div class="col-lg-4 p-l-0 title-margin-left">
+            <div class="page-header">
+                <div class="page-title">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Jadwal</li>
+                    </ol>
                 </div>
             </div>
         </div>
     </div>
-    {{-- ====================> Modal <==================== --}}
+    @include('partials.my-alert')
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div id="calendar-schedule"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{-- ====================> Modal <==================== --}}
 
     {{-- ======> Calender Modal <======== --}}
     <div class="modal fade" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">

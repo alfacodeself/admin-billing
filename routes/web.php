@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\{AlamatController, BagiHasilController, DashboardController, KategoriController, LanggananController, MetodePembayaranController, MitraController, PelangganController, PetugasController, ProdukController, TagihanController, TransaksiController};
+use App\Http\Controllers\{AlamatController, BagiHasilController, DashboardController, JenisLanggananController, KategoriController, LanggananController, MetodePembayaranController, MitraController, PelangganController, PetugasController, ProdukController, TagihanController, TransaksiController};
 use App\Http\Controllers\Auth\{LoginController, LogoutController, ResetPasswordController, VerifikasiEmailController};
 use App\Http\Controllers\Pengaturan\{DokumenController, PembayaranController, ProfilController};
 use Illuminate\Support\Facades\Route;
@@ -20,6 +20,12 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('logout', LogoutController::class)->name('logout');
     Route::get('/', DashboardController::class)->name('dashboard');
+    Route::prefix('jenis-langganan')->group(function(){
+        Route::get('/', [JenisLanggananController::class, 'index'])->name('jenis-langganan.index');
+        Route::post('store', [JenisLanggananController::class, 'store'])->name('jenis-langganan.store');
+        Route::put('update/{id}', [JenisLanggananController::class, 'update'])->name('jenis-langganan.update');
+        Route::delete('delete/{id}', [JenisLanggananController::class, 'destroy'])->name('jenis-langganan.delete');
+    });
     Route::prefix('kategori')->group(function () {
         Route::get('/', [KategoriController::class, 'index'])->name('kategori.index');
         Route::post('store', [KategoriController::class, 'store'])->name('kategori.store');
