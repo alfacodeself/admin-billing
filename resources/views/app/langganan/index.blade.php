@@ -69,8 +69,8 @@
                                             <span class="badge badge-warning">Pengajuan</span>
                                         @elseif($l->status == "dt" || $l->status == "n")
                                             <span class="badge badge-warning">{{ $l->status == "dt" ? 'Ditolak' : 'Nonaktif' }}</span>
-                                        @elseif ($l->status == "a")
-                                            <span class="badge badge-success">Aktif</span>
+                                        @elseif ($l->status == "a" || $l->status == 'dtr')
+                                            <span class="badge badge-success">{{ $l->status == 'a' ? 'Aktif' : 'Diterima' }}</span>
                                         @endif
                                     </td>
                                     <td>

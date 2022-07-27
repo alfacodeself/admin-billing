@@ -3,16 +3,11 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\Desa;
-use App\Models\Produk;
-use App\Models\Langganan;
-use App\Models\Pelanggan;
+use App\Models\{Desa, Produk, Langganan, Pelanggan, JenisLangganan, DetailLangganan};
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\JenisLangganan;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\LanggananRequest;
-use App\Models\DetailLangganan;
 
 class LanggananController extends Controller
 {
@@ -165,8 +160,7 @@ class LanggananController extends Controller
         try {
             $langganan = Langganan::where('id_langganan', $id)->firstOrFail();
             $langganan->update([
-                'pesan' => 'Selamat! Pengajuan anda telah diterima, Langganan telah aktif.',
-                'status' => 'a',
+                'status' => 'dtr',
                 'tanggal_verifikasi' => Carbon::now(),
                 'histori' => $langganan->histori . '|Melakukan Pembayaran',
                 'pesan' => 'Langganan telah disetujui! Harap segera melakukan pembayaran!'

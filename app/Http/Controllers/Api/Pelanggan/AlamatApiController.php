@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Pelanggan;
 
 use App\Models\Provinsi;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 

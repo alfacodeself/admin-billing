@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\{AlamatController, BagiHasilController, DashboardController, JenisLanggananController, KategoriController, LanggananController, MetodePembayaranController, MitraController, PelangganController, PetugasController, ProdukController, TagihanController, TransaksiController};
 use App\Http\Controllers\Auth\{LoginController, LogoutController, ResetPasswordController, VerifikasiEmailController};
+use App\Http\Controllers\Informasi\PemetaanController;
 use App\Http\Controllers\Pengaturan\{DokumenController, PembayaranController, ProfilController};
 use Illuminate\Support\Facades\Route;
 
@@ -103,6 +104,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::post('/', [BagiHasilController::class, 'store'])->name('bagi-hasil.store');
                 Route::put('/{id}', [BagiHasilController::class, 'update'])->name('bagi-hasil.update');
                 Route::delete('/{id}', [BagiHasilController::class, 'destroy'])->name('bagi-hasil.delete');
+            });
+        });
+        Route::prefix('informasi')->group(function(){
+            Route::prefix('pemetaan')->group(function(){
+                Route::get('/', [PemetaanController::class, 'index'])->name('pemetaan.index');
+                Route::get('pemetaan-informasi', [PemetaanController::class, 'get_alamat'])->name('pemetaan.informasi');
+                Route::get('status-informasi', [PemetaanController::class, 'set_status'])->name('pemetaan.set-status');
             });
         });
         Route::prefix('profil')->group(function () {

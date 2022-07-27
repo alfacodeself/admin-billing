@@ -37,7 +37,7 @@
                 </li>
                 <li><a href="{{ route('transaksi.index') }}"><i class="ti-credit-card"></i> Transaksi </a></li>
                 <li class="label">Information</li>
-                <li><a href="#"><i class="ti-map-alt"></i> Pemetaan Layanan</a></li>
+                <li><a href="{{ route('pemetaan.index') }}"><i class="ti-map-alt"></i> Pemetaan Layanan</a></li>
                 <li class="label">Settings</li>
                 <li><a href="{{ route('pengaturan.pembayaran.index') }}"><i class="ti-wallet"></i> Pembayaran</a></li>
                 <li><a href="{{ route('pengaturan.dokumen.index') }}"><i class="ti-agenda"></i> Dokumen</a></li>

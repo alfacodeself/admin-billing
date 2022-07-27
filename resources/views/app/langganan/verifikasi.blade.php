@@ -70,10 +70,10 @@
                                     <td>
                                         <button class="btn btn-info py-0 btn-sm" data-toggle="modal" data-target="#historiModal" data-histori="{{ $l->histori }}">Lihat Histori</button>
                                     </td>
-                                    <td>
-                                        <button type="button" class="btn btn-link m-0 p-0" data-toggle="modal" data-target="#showModal">
+                                    <td width="10%">
+                                        <a href="{{ route('langganan.show', $l->id_langganan) }}" class="btn btn-link m-0 p-0">
                                             <i class="ti-eye text-primary font-weight-bold"></i>
-                                        </button>
+                                        </a>
                                         @if ($l->status != 'dt')
                                             <button type="button" class="btn btn-link m-0 p-0" data-toggle="modal" data-target="#rejectModal" data-title="{{ $l->kode_langganan }}" data-route="{{ route('langganan.verifikasi.reject', $l->id_langganan) }}">
                                                 <i class="ti-close text-danger font-weight-bold"></i>
