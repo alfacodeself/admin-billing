@@ -49,7 +49,7 @@
                                     <th scope="row">{{ $loop->iteration }}</th>
                                     <td>{{ $dt->transaksi->id_transaksi }}</td>
                                     <td>
-                                        {{ $dt->jenis_pembayaran->jenis_pembayaran ?? $dt->transaksi->langganan->produk->nama_produk . ' | ' . $dt->transaksi->langganan->produk->kategori->nama_kategori }}
+                                        {{ $dt->keterangan }}
                                     </td>
                                     <td>{{ 'Rp.' . number_format($dt->harga) }}</td>
                                     <td>{{ $dt->qty }}</td>

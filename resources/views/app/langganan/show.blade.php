@@ -90,7 +90,7 @@
                                                 </div>
                                                 <div class="gender-content">
                                                     <span class="contact-title">Histori</span>
-                                                    <span class="gender">{{ $langganan->histori }}</span>
+                                                    <span class="gender">{{ str_replace('|', ' - ', $langganan->histori) }}</span>
                                                 </div>
                                             </div>
                                             <div class="contact-information">

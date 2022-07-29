@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\JenisDokumen;
-use App\Models\MetodePembayaran;
-use App\Models\PengaturanBagiHasil;
 use Illuminate\Http\Request;
+use App\Models\DetailBagiHasil;
+use App\Models\MetodePembayaran;
 use Illuminate\Support\Facades\DB;
+use App\Models\PengaturanBagiHasil;
 
 class AlamatController extends Controller
 {
@@ -59,8 +60,9 @@ class AlamatController extends Controller
         if ($request->ajax()) {
             $margin = DB::table('pengaturan_pembayaran')->select('harga_margin')->first();
             $langganan = DB::table('langganan')
+                            ->join('pelanggan', 'langganan.id_pelanggan', '=', 'pelanggan.id_pelanggan')
                             ->join('produk', 'langganan.id_produk', '=', 'produk.id_produk')
-                            ->select('tanggal_instalasi')
+                            ->select('tanggal_instalasi', 'pelanggan.id_pelanggan')
                             ->selectRaw('produk.harga + ? AS withmargin', [$margin->harga_margin])
                             ->where('langganan.kode_langganan', $kode)
                             ->first();
@@ -80,6 +82,21 @@ class AlamatController extends Controller
             }
             $a = $langganan->withmargin * $request->tagihan;
             $totalHarga += $a;
+            $b = 0;
+            $detail_mitra = DB::table('detail_mitra_pelanggan')->where('id_pelanggan', $langganan->id_pelanggan)->where('status', 'a')->first();
+            if ($detail_mitra != null) {
+                $biaya_mitra = DetailBagiHasil::with('pengaturan_bagi_hasil', 'mitra')->where('id_mitra', $detail_mitra->id_mitra)->where('status', 'a')->first();
+                if ($biaya_mitra !== null) {
+                    if ($biaya_mitra->pengaturan_bagi_hasil->status_jenis == 'f') {
+                        $b += $biaya_mitra->pengaturan_bagi_hasil->besaran;
+                    }
+                    else {
+                        $x = $biaya_mitra->pengaturan_bagi_hasil->besaran / 100 * $langganan->withmargin;
+                        $b += $x;
+                    }
+                }
+            }
+            $totalHarga += $b;
             return response()->json($totalHarga);
         }
     }

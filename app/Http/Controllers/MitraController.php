@@ -93,9 +93,11 @@ class MitraController extends Controller
     }
     public function show($id)
     {
-        $mitra = Mitra::with('dokumen_mitra', 'detail_mitra_pelanggan')->withCount('detail_mitra_pelanggan')->where('id_mitra', $id)->firstOrFail();
+        $mitra = Mitra::with('dokumen_mitra', 'detail_mitra_pelanggan', 'detail_bagi_hasil.pengaturan_bagi_hasil')->withCount('detail_mitra_pelanggan')->where('id_mitra', $id)->firstOrFail();
         $jenis_dokumen = JenisDokumen::where('status', 'a')->where('status_dokumen', 'm')->get();
-        return view('app.mitra.show', compact('mitra', 'jenis_dokumen'));
+        $detail_bagi_hasil = $mitra->detail_bagi_hasil->where('status', 'a')->first();
+        // dd($detail_bagi_hasil->pengaturan_bagi_hasil);
+        return view('app.mitra.show', compact('mitra', 'jenis_dokumen', 'detail_bagi_hasil'));
     }
     public function updateFoto(Request $request, $id)
     {

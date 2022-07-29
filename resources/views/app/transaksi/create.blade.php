@@ -105,7 +105,7 @@
                                                         <div class="gender-content">
                                                             <span class="contact-title">Produk</span>
                                                             <span
-                                                                class="gender">{{ $langganan->nama_produk . ' | ' . $langganan->nama_kategori }}</span>
+                                                                class="gender">{{ $langganan->produk->nama_produk . ' | ' . $langganan->produk->kategori->nama_kategori }}</span>
                                                         </div>
                                                         <div class="gender-content">
                                                             <span class="contact-title">Status</span>
@@ -126,28 +126,34 @@
                                                         </div>
                                                         <div class="gender-content">
                                                             <span class="contact-title">Histori</span>
-                                                            <span class="gender">{{ $langganan->histori }}</span>
+                                                            <span class="gender">{{ str_replace('|', ' - ', $langganan->histori) }}</span>
                                                         </div>
                                                     </div>
                                                     <div class="contact-information">
                                                         <h4>Alamat Pemasangan</h4>
                                                         <div class="phone-content">
                                                             <span class="contact-title">Provinsi</span>
-                                                            <span class="phone-number">{{ $langganan->provinsi }}</span>
+                                                            <span class="phone-number">
+                                                                {{ $langganan->desa->kecamatan->kabupaten->provinsi->nama_provinsi }}
+                                                            </span>
                                                         </div>
                                                         <div class="email-content">
                                                             <span class="contact-title">Kabupaten</span>
-                                                            <span
-                                                                class="contact-email">{{ $langganan->kabupaten }}</span>
+                                                            <span class="phone-number">
+                                                                {{ $langganan->desa->kecamatan->kabupaten->nama_kabupaten }}
+                                                            </span>
                                                         </div>
                                                         <div class="email-content">
                                                             <span class="contact-title">Kecamatan</span>
-                                                            <span
-                                                                class="contact-email">{{ $langganan->kecamatan }}</span>
+                                                            <span class="phone-number">
+                                                                {{ $langganan->desa->kecamatan->nama_kecamatan }}
+                                                            </span>
                                                         </div>
                                                         <div class="email-content">
                                                             <span class="contact-title">Desa</span>
-                                                            <span class="contact-email">{{ $langganan->desa }}</span>
+                                                            <span class="phone-number">
+                                                                {{ $langganan->desa->nama_desa }}
+                                                            </span>
                                                         </div>
                                                     </div>
                                                     <div class="contact-information">
@@ -155,28 +161,28 @@
                                                         <div class="gender-content">
                                                             <span class="contact-title">Tanggal Mulai</span>
                                                             <span
-                                                                class="gender">{{ $langganan->tanggal_mulai ?? '-' }}</span>
+                                                                class="gender">{{ $detail_langganan->tanggal_mulai ?? '-' }}</span>
                                                         </div>
                                                         <div class="gender-content">
                                                             <span class="contact-title">Tanggal
                                                                 Kadaluarsa</span>
                                                             <span
-                                                                class="gender">{{ $langganan->tanggal_kadaluarsa ?? '-' }}</span>
+                                                                class="gender">{{ $detail_langganan->tanggal_kadaluarsa ?? '-' }}</span>
                                                         </div>
                                                         <div class="gender-content">
                                                             <span class="contact-title">Tanggal Selesai</span>
                                                             <span
-                                                                class="gender">{{ $langganan->tanggal_selesai ?? '-' }}</span>
+                                                                class="gender">{{ $detail_langganan->tanggal_selesai ?? '-' }}</span>
                                                         </div>
                                                         <div class="gender-content">
                                                             <span class="contact-title">Sisa Tagihan</span>
                                                             <span
-                                                                class="gender">{{ $langganan->sisa_tagihan ?? '-' }}</span>
+                                                                class="gender">{{ $detail_langganan->sisa_tagihan ?? '-' }}</span>
                                                         </div>
                                                         <div class="gender-content">
                                                             <span class="contact-title">Status</span>
                                                             <span
-                                                                class="gender">{{ $langganan->status_pembayaran == 'bl' ? 'Belum Lunas' : 'Lunas' }}</span>
+                                                                class="gender">{{ $detail_langganan->status_pembayaran == 'bl' ? 'Belum Lunas' : 'Lunas' }}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -188,7 +194,7 @@
                                             <ul class="nav nav-tabs" role="tablist">
                                                 <li role="presentation" class="active">
                                                     <a aria-controls="1" role="tab" data-toggle="tab">Pelanggan</a>
-                                                    <a href="{{ route('pelanggan.show', $langganan->id_pelanggan) }}"
+                                                    <a href="{{ route('pelanggan.show', $langganan->pelanggan->id_pelanggan) }}"
                                                         class="btn btn-link p-0 m-0">
                                                         <i class="ti-eye text-primary font-weight-bold"></i>
                                                     </a>
@@ -201,23 +207,23 @@
                                                         <div class="birthday-content">
                                                             <span class="contact-title">Nama:</span>
                                                             <span
-                                                                class="birth-date">{{ $langganan->nama_pelanggan }}</span>
+                                                                class="birth-date">{{ $langganan->pelanggan->nama_pelanggan }}</span>
                                                         </div>
                                                         <div class="birthday-content">
                                                             <span class="contact-title">NIK:</span>
-                                                            <span class="birth-date">{{ $langganan->nik }}</span>
+                                                            <span class="birth-date">{{ $langganan->pelanggan->nik }}</span>
                                                         </div>
                                                         <div class="gender-content">
                                                             <span class="contact-title">Jenis Kelamin:</span>
                                                             <span
-                                                                class="gender">{{ $langganan->jenis_kelamin == 'l' ? 'Laki-Laki' : 'Perempuan' }}</span>
+                                                                class="gender">{{ $langganan->pelanggan->jenis_kelamin == 'l' ? 'Laki-Laki' : 'Perempuan' }}</span>
                                                         </div>
                                                         <div class="gender-content">
                                                             <span class="contact-title">Status
                                                                 Pelanggan:</span>
                                                             <span
-                                                                class="gender {{ $langganan->status_pelanggan == 'a' ? '' : 'text-danger' }}">
-                                                                {{ $langganan->status_pelanggan == 'a' ? 'Aktif' : 'Tidak Aktif' }}
+                                                                class="gender {{ $langganan->pelanggan->status == 'a' ? '' : 'text-danger' }}">
+                                                                {{ $langganan->pelanggan->status == 'a' ? 'Aktif' : 'Tidak Aktif' }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -226,11 +232,11 @@
                                                         <div class="phone-content">
                                                             <span class="contact-title">No. Telp:</span>
                                                             <span
-                                                                class="phone-number">{{ '+' . $langganan->nomor_hp }}</span>
+                                                                class="phone-number">{{ '+' . $langganan->pelanggan->nomor_hp }}</span>
                                                         </div>
                                                         <div class="email-content">
                                                             <span class="contact-title">Email:</span>
-                                                            <span class="contact-email">{{ $langganan->email }}</span>
+                                                            <span class="contact-email">{{ $langganan->pelanggan->email }}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -263,7 +269,7 @@
                                                             </thead>
                                                             <tbody>
                                                                 {{-- @dd($transaksi) --}}
-                                                                @forelse ($transaksi as $t)
+                                                                @forelse ($langganan->transaksi as $t)
                                                                     <tr>
                                                                         <th scope="row">
                                                                             {{ $loop->iteration }}</th>
@@ -322,8 +328,7 @@
                         </div>
                     </div>
                     {{-- @dd() --}}
-                    @if ($langganan->tanggal_kadaluarsa == null ||
-                        \Carbon\Carbon::now()->toDateString() > $langganan->tanggal_kadaluarsa)
+                    @if ($langganan->tanggal_kadaluarsa == null || \Carbon\Carbon::now()->toDateString() > $detail_langganan->tanggal_kadaluarsa)
                         <form action="{{ route('transaksi.store', $langganan->kode_langganan) }}" method="POST" class="form-horizontal">
                             @csrf
                             @method('POST')
@@ -338,88 +343,40 @@
                                                         <th>#</th>
                                                         <th>Jenis Pembayaran</th>
                                                         <th>Banyak</th>
-                                                        <th>Harga</th>
+                                                        <th width="10%">Harga</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @if ($langganan->tanggal_instalasi == null)
-                                                        @forelse ($jenis_bayar as $key => $jb)
-                                                            <tr>
-                                                                <th scope="row">{{ $loop->iteration }}</th>
-                                                                <td>{{ $jb->jenis_pembayaran }}</td>
-                                                                <td>
-                                                                    1
-                                                                </td>
-                                                                <td>{{ $jb->jenis_biaya == 'f' ? 'Rp.' . number_format($jb->harga) : 'Rp.' . number_format(($jb->harga / 100) * $langganan->withmargin) }}
-                                                                </td>
-                                                            </tr>
-                                                        @empty
-                                                            <tr>
-                                                                <td colspan="9" class="text-center">Belum ada
-                                                                    transaksi!</td>
-                                                            </tr>
-                                                        @endforelse
+                                                    @foreach ($tagihan as $t)
                                                         <tr>
-                                                            <th scope="row">{{ count($jenis_bayar) + 1 }}</th>
-                                                            <td>{{ $langganan->nama_produk }}</td>
-                                                            <td>
-                                                                <input type="number" id="tagihan" class="form-control"
-                                                                    style="width: 60px" onchange="changePrice()" value="1"
-                                                                    max="{{ $langganan->sisa_tagihan }}" min="1"
-                                                                    name="jumlah_tagihan">
-                                                                @error('tagihan')
-                                                                    <strong>
-                                                                        <small class="text-danger">{{ $message }}</small>
-                                                                    </strong>
-                                                                @enderror
-                                                            </td>
-                                                            <td id="priceDinamis">
-                                                                {{ 'Rp.' . number_format($langganan->withmargin) }}
-                                                            </td>
+                                                            <td>{{ $loop->iteration }}</td>
+                                                            <td>{{ $t['name'] }}</td>
+                                                            <td>1</td>
+                                                            <td>{{ 'Rp.' . number_format($t['price']) }}</td>
                                                         </tr>
-                                                    @else
-                                                        @forelse ($jenis_bayar as $key => $jb)
-                                                            @if ($key != 0)
-                                                                <tr>
-                                                                    <th scope="row">{{ $loop->iteration - 1 }}</th>
-                                                                    <td>{{ $jb->jenis_pembayaran }}</td>
-                                                                    <td>
-                                                                        1
-                                                                    </td>
-                                                                    <td>{{ $jb->jenis_biaya == 'f' ? 'Rp.' . number_format($jb->harga) : 'Rp.' . number_format(($jb->harga / 100) * $langganan->withmargin) }}
-                                                                    </td>
-                                                                </tr>
-                                                            @endif
-                                                        @empty
-                                                            <tr>
-                                                                <td colspan="9" class="text-center">Belum ada
-                                                                    transaksi!</td>
-                                                            </tr>
-                                                        @endforelse
-                                                        <tr>
-                                                            <th scope="row">{{ count($jenis_bayar) }}</th>
-                                                            <td>{{ $langganan->nama_produk }}</td>
-                                                            <td>
-                                                                <input type="number" id="tagihan" class="form-control"
-                                                                    style="width: 60px" onchange="changePrice()" value="1"
-                                                                    max="{{ $langganan->sisa_tagihan }}" min="1"
-                                                                    name="jumlah_tagihan">
-                                                                @error('tagihan')
-                                                                    <strong>
-                                                                        <small class="text-danger">{{ $message }}</small>
-                                                                    </strong>
-                                                                @enderror
-                                                            </td>
-                                                            <td id="priceDinamis">
-                                                                {{ 'Rp.' . number_format($langganan->withmargin) }}
-                                                            </td>
-                                                        </tr>
-                                                    @endif
+                                                    @endforeach
+                                                    <tr>
+                                                        <td></td>
+                                                        <td colspan="2">Jumlah Tagihan per Bulan Yang Akan Dibayar</td>
+                                                        <td class="text-left">
+                                                            <input type="number"
+                                                                id="tagihan"
+                                                                class="form-control"
+                                                                onchange="changePrice()"
+                                                                value="1"
+                                                                min="1"
+                                                                max="{{ $detail_langganan->sisa_tagihan }}"
+                                                                name="jumlah_tagihan">
+                                                            @error('jumlah_tagihan')
+                                                            <strong class="text-danger">{{ $message }}</strong>
+                                                            @enderror
+                                                        </td>
+                                                    </tr>
                                                     <tr>
                                                         <td colspan="4">
-                                                            <button type="button" id="btn-total"
-                                                                class="btn btn-info text-right" onclick="changeTotal()">Hitung
-                                                                Total</button>
+                                                            <button type="button" id="btn-total" class="btn btn-info text-right" onclick="changeTotal()">
+                                                                Hitung Total
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -486,16 +443,8 @@
     @push('js')
         <script>
             function changePrice() {
-                let val = $('#tagihan').val()
-                let price = {{ $langganan->withmargin }}
-                $('#priceDinamis').empty()
                 $('#totalDinamis').empty()
-                const total = price * val;
-                let html = '';
-                html += '<span>' + 'Rp.' + total.toLocaleString('id-ID') + '</span>'
-                $('#priceDinamis').append(html)
                 $('#btn-total').prop('disabled', false);
-                // changeTotal()
             }
 
             function changeTotal() {

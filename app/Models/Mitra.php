@@ -23,4 +23,8 @@ class Mitra extends Model
     {
         return $this->hasMany(DetailMitraPelanggan::class, 'id_mitra');
     }
+    public function detail_bagi_hasil()
+    {
+        return $this->hasMany(DetailBagiHasil::class, 'id_mitra');
+    }
 }

@@ -5,18 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PengaturanBagiHasil extends Model
+class DanaMitra extends Model
 {
     use HasFactory;
-    protected $table = 'pengaturan_bagi_hasil';
+    protected $table = 'dana_mitra';
     protected $guarded = [];
-    protected $primaryKey = 'id_pengaturan_bagi_hasil';
+    protected $primaryKey = 'id_dana_mitra';
     public $incrementing = false;
     protected $keyType = 'string';
     public $timestamps = false;
 
     public function detail_bagi_hasil()
     {
-        return $this->hasMany(DetailBagiHasil::class, 'id_pengaturan_bagi_hasil');
+        return $this->belongsTo(DetailBagiHasil::class, 'id_detail_bagi_hasil');
+    }
+    public function transaksi()
+    {
+        return $this->belongsTo(Transaksi::class, 'id_transaksi');
     }
 }

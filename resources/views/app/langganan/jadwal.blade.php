@@ -23,14 +23,64 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
+                <div class="card-title">
+                    <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#tambahModal">
+                        <i class="ti-plus font-weight-bold"></i> Tambah Jadwal Pemasangan
+                    </button>
+                </div>
                 <div class="card-body">
                     <div id="calendar-schedule"></div>
                 </div>
             </div>
         </div>
     </div>
-{{-- ====================> Modal <==================== --}}
 
+{{-- ====================> Modal <==================== --}}
+{{-- ===========> Tambah Modal <============== --}}
+    <div class="modal fade" id="tambahModal" tabindex="-1" role="dialog" aria-labelledby="editCategory"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Jadwal Pemasangan</h5>
+                </div>
+                <form action="{{ route('produk.store') }}" method="post">
+                    @csrf
+                    @method('POST')
+                    <div class="modal-body px-4">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label for="langganan">ID Langganan</label>
+                                    <input type="text" class="form-control" id="langganan" name="langganan" placeholder="">
+                                    @error('langganan')
+                                        <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
+                                    @enderror
+                                    <label for="tanggal_pengajuan">Tanggal Pengajuan</label>
+                                    <input type="date" name="tanggal_pengajuan" id="tanggal_pengajuan" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <label for="table">Langganan</label>
+                                <table class="table table-bordered table-hover table-striped">
+                                    <tr>
+                                        <td>Test</td>
+                                        <td>Test</td>
+                                        <td>Test</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary">Buat Jadwal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     {{-- ======> Calender Modal <======== --}}
     <div class="modal fade" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">

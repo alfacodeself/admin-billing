@@ -35,4 +35,8 @@ class Transaksi extends Model
     {
         return $this->hasMany(DetailTransaksi::class, 'id_transaksi');
     }
+    public function dana_mitra()
+    {
+        return $this->hasOne(DanaMitra::class, 'id_transaksi');
+    }
 }

@@ -108,6 +108,19 @@
                                                     <span class="contact-email">{{ $mitra->email }}</span>
                                                 </div>
                                             </div>
+                                            <div class="contact-information">
+                                                <h4>Bagi Hasil</h4>
+                                                <div class="phone-content">
+                                                    <span class="contact-title">Bagi Hasil per Transaksi:</span>
+                                                    <span class="phone-number">
+                                                        @if ($detail_bagi_hasil->pengaturan_bagi_hasil->status_jenis == 'p')
+                                                            {{ $detail_bagi_hasil->pengaturan_bagi_hasil->besaran . '%' }}
+                                                        @else
+                                                            {{ 'Rp.' . number_format($detail_bagi_hasil->pengaturan_bagi_hasil->besaran) }}
+                                                        @endif
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

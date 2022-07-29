@@ -28,16 +28,19 @@ class LanggananController extends Controller
     {
         if ($nik = request()->nik) {
             try {
+                $margin = DB::table('pengaturan_pembayaran')->select('harga_margin')->first();
                 $pelanggan = Pelanggan::with('desa', 'dokumen_pelanggan')->where('nik', $nik)->firstOrFail();
                 if ($pelanggan->status == 'n') {
-                    return redirect()->back()->with('danger', 'Pelanggan dengan NIK ' . $pelanggan->nik . 'atas nama ' . $pelanggan->nama_pelanggan . 'tidak aktif!');
+                    return redirect()->route('langganan.create')->with('danger', 'Pelanggan dengan NIK ' . $pelanggan->nik . ' atas nama ' . $pelanggan->nama_pelanggan . '    tidak aktif!');
+                }elseif ($pelanggan->verifikasi_email == null) {
+                    return redirect()->route('langganan.create')->with('danger', 'Pelanggan dengan NIK ' . $pelanggan->nik . ' atas nama ' . $pelanggan->nama_pelanggan . ' belum verifikasi email!');
                 }
                 $kategori = DB::table('kategori')
                                 ->select('kategori.nama_kategori', 'kategori.id_kategori')
-                                ->where('kategori.status', 'a')->get()->map(function($kategori) {
-                                    $kategori->produk = DB::table('produk')->select('id_produk', 'nama_produk', 'deskripsi', 'harga', 'fitur')->where('status', 'a')->where('id_kategori', $kategori->id_kategori)->get()->map(function($produk) {
+                                ->where('kategori.status', 'a')->get()->map(function($kategori) use ($margin){
+                                    $kategori->produk = DB::table('produk')->select('id_produk', 'nama_produk', 'deskripsi', 'harga', 'fitur')->where('status', 'a')->where('id_kategori', $kategori->id_kategori)->get()->map(function($produk) use ($margin){
                                         $produk->fitur = explode('|', $produk->fitur);
-                                        $produk->harga = 'Rp.' . number_format($produk->harga);
+                                        $produk->harga = 'Rp.' . number_format($produk->harga + $margin->harga_margin);
                                         return $produk;
                                     })->toArray();
                                     return $kategori;
@@ -71,6 +74,7 @@ class LanggananController extends Controller
     {
         try {
             $pelanggan = Pelanggan::findOrFail($request->pelanggan);
+            $this->middleware('complete.document:' . $pelanggan);
             $desa = Desa::findOrFail($request->desa);
             $jenis_langganan = JenisLangganan::findOrFail($request->jenis_langganan);
             $produk = Produk::findOrFail($request->produk);
