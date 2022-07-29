@@ -44,40 +44,48 @@
                 <div class="modal-header">
                     <h5 class="modal-title">Tambah Jadwal Pemasangan</h5>
                 </div>
-                <form action="{{ route('produk.store') }}" method="post">
-                    @csrf
-                    @method('POST')
-                    <div class="modal-body px-4">
-                        <div class="row">
-                            <div class="col-md-5">
+                <div class="modal-body px-4">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <form action="{{ route('pengajuan.instalasi.store') }}" method="post">
+                                @csrf
+                                @method('POST')
                                 <div class="form-group">
                                     <label for="langganan">ID Langganan</label>
-                                    <input type="text" class="form-control" id="langganan" name="langganan" placeholder="">
+                                    <input type="text" class="form-control" id="langganan" name="langganan" value="{{ old('langganan') }}" onkeyup="search()" placeholder="ID Langganan">
                                     @error('langganan')
                                         <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
                                     @enderror
                                     <label for="tanggal_pengajuan">Tanggal Pengajuan</label>
-                                    <input type="date" name="tanggal_pengajuan" id="tanggal_pengajuan" class="form-control">
+                                    <input type="date" name="tanggal_pengajuan" value="{{ old('tanggal_pengajuan') }}" id="tanggal_pengajuan" class="form-control">
+                                    @error('tanggal_pengajuan')
+                                        <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
+                                    @enderror
+                                    <br>
+                                    <button type="submit" class="btn btn-block btn-primary">Buat Jadwal</button>
                                 </div>
-                            </div>
-                            <div class="col-md-7">
-                                <label for="table">Langganan</label>
-                                <table class="table table-bordered table-hover table-striped">
-                                    <tr>
-                                        <td>Test</td>
-                                        <td>Test</td>
-                                        <td>Test</td>
-                                    </tr>
-                                </table>
-                            </div>
+                            </form>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="table">Langganan</label>
+                            <table class="table table-bordered table-hover table-striped">
+                                <thead>
+                                    <th>ID Langganan</th>
+                                    <th>Pelanggan</th>
+                                    <th>Produk</th>
+                                    <th>Status</th>
+                                </thead>
+                                <tbody id="bodysearch">
+
+                                </tbody>
+                            </table>
                         </div>
                     </div>
+                </div>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                        <button type="submit" class="btn btn-primary">Buat Jadwal</button>
-                    </div>
-                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                </div>
             </div>
         </div>
     </div>
@@ -243,6 +251,36 @@
     </script>
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyCWY-q7-nQ4ESJpVa1Jx4ErwzDCoJ73cAo&libraries=&v=weekly">
+    </script>
+    <script>
+        function search() {
+            let jenis = $('#langganan').val();
+            $.ajax({
+                data: {jenis},
+                url: '{{ route("cari.langganan") }}',
+                success:function(res){
+                    var html = '';
+                    if (res.length == 0) {
+                        html += '<tr>';
+                        html += '<td colspan="4" class="text-center">Langganan tidak ditemukan!</td>';
+                        html += '</tr>';
+                    }else {
+                        res.forEach(e => {
+                            html += '<tr>';
+                            html += '<td>'+ e.kode_langganan +'</td>';
+                            html += '<td>'+ e.nama_pelanggan +'</td>';
+                            html += '<td>'+ e.nama_produk +'</td>';
+                            html += '<td>'+ e.status_langganan +'</td>';
+                            html += '</tr>';
+                        });
+                    }
+                    $('#bodysearch').html(html)
+                },
+                error:function(err){
+                    console.error(err);
+                }
+            })
+        }
     </script>
 @endpush
 @push('css')

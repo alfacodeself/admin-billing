@@ -216,4 +216,68 @@ class LanggananController extends Controller
         $data = json_encode($data);
         return view('app.langganan.jadwal', compact('data', 'today'));
     }
+    public function searchSchedule(Request $request)
+    {
+        if ($request->ajax()) {
+            $langganan = DB::table('langganan')
+                        ->join('pelanggan', 'langganan.id_pelanggan', '=', 'pelanggan.id_pelanggan')
+                        ->join('produk', 'langganan.id_produk', '=', 'produk.id_produk')
+                        ->select('langganan.kode_langganan', 'pelanggan.nama_pelanggan', 'produk.nama_produk', 'langganan.status AS status_langganan')
+                        ->where('langganan.kode_langganan', 'like',  '%' . $request->jenis . '%')
+                        ->get()
+                        ->map(function($langganan)
+                        {
+                            if ($langganan->status_langganan == 'a') {
+                                $status = 'aktif';
+                            }elseif ($langganan->status_langganan == 'n') {
+                                $status = 'nonaktif';
+                            }elseif ($langganan->status_langganan == 'pn') {
+                                $status = 'pengajuan';
+                            }elseif ($langganan->status_langganan == 'dt') {
+                                $status = 'ditolak';
+                            }elseif ($langganan->status_langganan == 'dtr') {
+                                $status = 'diterima';
+                            }elseif ($langganan->status_langganan == 'pni') {
+                                $status = 'pengajuan instalasi';
+                            }elseif ($langganan->status_langganan == 'pmi') {
+                                $status = 'pemasangan instalasi';
+                            }
+                            $langganan->status_langganan = $status;
+                            return $langganan;
+                        });
+            return response()->json($langganan);
+        }
+    }
+    public function makeSchedule(Request $request)
+    {
+        $valid = $request->validate([
+            'langganan' => 'required',
+            'tanggal_pengajuan' => 'required|date'
+        ], [
+            'langganan.required' => 'ID Langganan tidak boleh kosong!',
+            'tanggal_pengajuan.required' => 'Tanggal pengajuan tidak boleh kosong!',
+            'tanggal_pengajuan.date' => 'Format tanggal pengajuan salah!',
+        ]);
+        try {
+            $now = Carbon::parse(date_create(now('+0700')));
+            // dd($request->all());
+            if ($valid['tanggal_pengajuan'] < $now) {
+                return redirect()->route('langganan.schedule')->with('danger', 'Tanggal pengajuan harus lebih besar dari tanggal sekarang!');
+            }
+            $langganan = Langganan::where('kode_langganan', $valid['langganan'])->firstOrFail();
+            if ($langganan->status != 'pni') {
+                return redirect()->route('langganan.schedule')->with('danger', 'Langganan yang diajukan tidak dalam pengajuan pemasangan instalasi!');
+            }
+            if ($langganan->tanggal_instalasi != null) {
+                return redirect()->route('langganan.schedule')->with('danger', 'Langganan telah di instalasi!');
+            }
+            $langganan->update([
+                'tanggal_instalasi' => Carbon::parse($valid['tanggal_pengajuan']),
+                'status' => 'pmi'
+            ]);
+            return redirect()->route('langganan.schedule')->with('success', 'Berhasil mengajukan tanggal instalasi');
+        } catch (\Throwable $th) {
+            return redirect()->route('langganan.schedule')->with('danger', 'Gagal mengajukan tanggal instalasi! ' . $th->getMessage());
+        }
+    }
 }

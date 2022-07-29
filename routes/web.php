@@ -79,6 +79,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('verifikasi/{id}/diterima', [LanggananController::class, 'verify'])->name('langganan.verifikasi.verify');
         Route::get('detail-langganan/{id}', [LanggananController::class, 'show'])->name('langganan.show');
         Route::get('jadwal-instalasi', [LanggananController::class, 'schedule'])->name('langganan.schedule');
+        Route::get('cari-langganan', [LanggananController::class, 'searchSchedule'])->name('cari.langganan');
+        Route::post('pengajuan-instalasi-langganan', [LanggananController::class, 'makeSchedule'])->name('pengajuan.instalasi.store');
     });
     Route::prefix('transaksi')->group(function () {
         Route::get('/', [TransaksiController::class, 'index'])->name('transaksi.index');
