@@ -37,6 +37,7 @@
             <div class="col-md-8">
                 <div class="card mt-3">
                     <div class="card-body">
+                        {{-- Start --}}
                         <ul class="nav nav-tabs customtab2" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" data-toggle="tab" href="#profile" role="tab">
@@ -149,6 +150,7 @@
                                 </div>
                             </div>
                         </div>
+                        {{-- End --}}
                     </div>
                 </div>
             </div>

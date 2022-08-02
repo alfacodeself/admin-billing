@@ -23,7 +23,7 @@
 @include('partials.my-alert')
 <section id="main-content">
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-{{ Auth::user()->can('tambah jenis langganan') ? '8' : '12' }}">
             <div class="card">
                 <h4 class="card-title font-weight-bold">
                     Data Jenis Langganan
@@ -53,6 +53,7 @@
                                     </td>
                                     <td>{{ $jl->status_berlangganan ? 'Berlangganan' : 'Tidak Berlangganan' }}</td>
                                     <td>
+                                        @can('edit jenis langganan')
                                         <button
                                             type="button"
                                             class="btn btn-link m-0 p-0"
@@ -66,6 +67,8 @@
                                             data-route="{{ route('jenis-langganan.update', $jl->id_jenis_langganan) }}">
                                             <i class="ti-pencil-alt text-warning font-weight-bold"></i>
                                         </button>
+                                        @endcan
+                                        @can('hapus jenis langganan')
                                         <form action="{{ route('jenis-langganan.delete', $jl->id_jenis_langganan) }}" method="post" class="d-inline">
                                             @csrf
                                             @method('DELETE')
@@ -73,6 +76,7 @@
                                                 <i class="ti-trash text-danger font-weight-bold"></i>
                                             </button>
                                         </form>
+                                        @endcan
                                     </td>
                                 </tr>
                                 @empty
@@ -89,6 +93,7 @@
                 </div>
             </div>
         </div>
+        @can('tambah jenis langganan')
         <div class="col-md-4">
             <div class="card">
                 <h4 class="card-title text-center font-weight-bold">Buat Jenis Langganan Baru</h4>
@@ -130,14 +135,16 @@
                             <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
                             @enderror
                         </div>
-                        <button type="submit" class="btn btn-block btn-outline-primary">Buat Kategori</button>
+                        <button type="submit" class="btn btn-block btn-outline-primary">Buat Jenis Langganan</button>
                     </form>
                 </div>
             </div>
         </div>
+        @endcan
     </div>
 </section>
 {{-- Modals --}}
+@can('edit jenis langganan')
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editCategory" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -191,26 +198,29 @@
         </div>
     </div>
 </div>
+@endcan
 @endsection
+@can('edit jenis langganan')
 @push('js')
-    <script>
-        $('#editModal').on('show.bs.modal', function (event) {
-            const button = $(event.relatedTarget)
-            let id = button.data('id')
-            let jenis = button.data('jenis')
-            let tagihan = button.data('tagihan')
-            let idl = button.data('idl')
-            let status = button.data('status')
-            let route = button.data('route')
+<script>
+    $('#editModal').on('show.bs.modal', function (event) {
+        const button = $(event.relatedTarget)
+        let id = button.data('id')
+        let jenis = button.data('jenis')
+        let tagihan = button.data('tagihan')
+        let idl = button.data('idl')
+        let status = button.data('status')
+        let route = button.data('route')
 
 
-            let modal = $(this)
-            modal.find('.modal-title').text('Edit Jenis Langganan - ' + jenis)
-            modal.find('.modal-jenis').val(jenis)
-            modal.find('.modal-tagihan').val(tagihan)
-            modal.find('.modal-statusLangganan').val(idl)
-            modal.find('.modal-status').val(status)
-            modal.find('.modal-form').attr('action', route);
-        });
-    </script>
+        let modal = $(this)
+        modal.find('.modal-title').text('Edit Jenis Langganan - ' + jenis)
+        modal.find('.modal-jenis').val(jenis)
+        modal.find('.modal-tagihan').val(tagihan)
+        modal.find('.modal-statusLangganan').val(idl)
+        modal.find('.modal-status').val(status)
+        modal.find('.modal-form').attr('action', route);
+    });
+</script>
 @endpush
+@endcan

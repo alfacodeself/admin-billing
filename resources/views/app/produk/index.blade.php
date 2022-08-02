@@ -30,10 +30,11 @@
                     </h4>
                     <br>
                     <div class="card-body">
-                        <button type="button" class="btn btn-outline-primary" data-toggle="modal"
-                            data-target="#tambahModal">
+                        @can('tambah produk')
+                        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#tambahModal">
                             <i class="ti-plus font-weight-bold"></i> Tambah Produk
                         </button>
+                        @endcan
                         <div class="table-responsive">
                             <table class="table table-hover table-stripped">
                                 <thead>
@@ -70,27 +71,31 @@
                                                 <span class="badge badge-{{ $p->status == 'a' ? 'success' : 'danger' }}">{{ $p->status == 'a' ? 'aktif' : 'nonaktif' }}</span>
                                             </td>
                                             <td>
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-link m-0 p-0"
-                                                    data-toggle="modal"
-                                                    data-target="#editModal"
-                                                    data-produk="{{ $p->nama_produk }}"
-                                                    data-kategori="{{ $p->kategori->id_kategori }}"
-                                                    data-deskripsi="{{ $p->deskripsi }}"
-                                                    data-harga="{{ $p->harga }}"
-                                                    data-status="{{ $p->status }}"
-                                                    data-fitur="{{ $p->fitur }}"
-                                                    data-route="{{ route('produk.update', $p->id_produk) }}">
-                                                    <i class="ti-pencil-alt text-warning font-weight-bold"></i>
-                                                </button>
-                                                <form action="{{ route('produk.destroy', $p->id_produk) }}" method="post" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-link m-0 p-0">
-                                                        <i class="ti-trash text-danger font-weight-bold"></i>
+                                                @can('edit produk')
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-link m-0 p-0"
+                                                        data-toggle="modal"
+                                                        data-target="#editModal"
+                                                        data-produk="{{ $p->nama_produk }}"
+                                                        data-kategori="{{ $p->kategori->id_kategori }}"
+                                                        data-deskripsi="{{ $p->deskripsi }}"
+                                                        data-harga="{{ $p->harga }}"
+                                                        data-status="{{ $p->status }}"
+                                                        data-fitur="{{ $p->fitur }}"
+                                                        data-route="{{ route('produk.update', $p->id_produk) }}">
+                                                        <i class="ti-pencil-alt text-warning font-weight-bold"></i>
                                                     </button>
-                                                </form>
+                                                @endcan
+                                                @can('hapus produk')
+                                                    <form action="{{ route('produk.destroy', $p->id_produk) }}" method="post" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-link m-0 p-0">
+                                                            <i class="ti-trash text-danger font-weight-bold"></i>
+                                                        </button>
+                                                    </form>
+                                                @endcan
                                             </td>
                                         </tr>
                                     @empty
@@ -130,8 +135,9 @@
         </div>
     </div>
     {{-- ===========> Tambah Modal <============== --}}
+    @can('tambah produk')
     <div class="modal fade" id="tambahModal" tabindex="-1" role="dialog" aria-labelledby="editCategory"
-        aria-hidden="true">
+    aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -198,9 +204,11 @@
             </div>
         </div>
     </div>
+    @endcan
     {{-- ============> Edit Modal <=============== --}}
+    @can('edit produk')
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editCategory"
-        aria-hidden="true">
+    aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -268,31 +276,11 @@
             </div>
         </div>
     </div>
+    @endcan
 @endsection
 @push('js')
+    @can('edit produk')
     <script>
-        // ============> Insert Modal Jquery <================
-        $('#tambahModal').on('show.bs.modal', function (event) {
-            $('.fitur-field').empty();
-            var html = '';
-            html += '<tr>';
-            html += '<td width="80%"><input type="text" class="form-control" name="fitur[]"></td>';
-            html += '<td><button class="btn btn-info" type="button" id="add_btn"><i class="ti-plus"></i></button></td>';
-            html += '</tr>';
-            $('.fitur-field').html(html);
-        });
-        $(document).on('click', '#add_btn', function() {
-            var html = '';
-            html += '<tr>';
-                html += '<td width="80%"><input type="text" class="form-control" name="fitur[]"></td>';
-                html +=
-                '<td><button class="btn btn-danger" type="button" id="remove_btn"><i class="ti-trash"></i></button></td>';
-                html += '</tr>';
-                $('.fitur-field').append(html)
-            });
-        $(document).on('click', '#remove_btn', function() {
-            $(this).closest('tr').remove();
-        });
         // ============> Edit Modal Jquery <===============
         $(document).on('click', '#add_btn_edit', function() {
             var html = '';
@@ -340,6 +328,35 @@
             });
             $('.fitur-field').html(html)
         });
+    </script>
+    @endcan
+    @can('tambah produk')
+    <script>
+        // ============> Insert Modal Jquery <================
+        $('#tambahModal').on('show.bs.modal', function (event) {
+            $('.fitur-field').empty();
+            var html = '';
+            html += '<tr>';
+            html += '<td width="80%"><input type="text" class="form-control" name="fitur[]"></td>';
+            html += '<td><button class="btn btn-info" type="button" id="add_btn"><i class="ti-plus"></i></button></td>';
+            html += '</tr>';
+            $('.fitur-field').html(html);
+        });
+        $(document).on('click', '#add_btn', function() {
+            var html = '';
+            html += '<tr>';
+                html += '<td width="80%"><input type="text" class="form-control" name="fitur[]"></td>';
+                html +=
+                '<td><button class="btn btn-danger" type="button" id="remove_btn"><i class="ti-trash"></i></button></td>';
+                html += '</tr>';
+                $('.fitur-field').append(html)
+            });
+        $(document).on('click', '#remove_btn', function() {
+            $(this).closest('tr').remove();
+        });
+    </script>
+    @endcan
+    <script>
         // ============> Fitur Modal Jquery <================
         $('#fiturModal').on('show.bs.modal', function (event) {
             const button = $(event.relatedTarget)

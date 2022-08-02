@@ -30,9 +30,9 @@
                     </h4>
                     <br>
                     <div class="card-body">
-                        <a href="{{ route('mitra.create') }}" class="btn btn-outline-primary">
-                            <i class="ti-plus font-weight-bold"></i> Tambah Mitra
-                        </a>
+                        @can('lihat mitra')
+
+                        @endcan
                         <a href="{{ route('langganan.create') }}" class="btn btn-outline-info float-right">
                             <i class="ti-printer"></i> Cetak
                         </a>
@@ -59,6 +59,7 @@
                                             </td>
                                             <td>{{ $m->nama_mitra }}</td>
                                             <td>
+                                                @can('detail mitra')
                                                 <ul>
                                                     @forelse ($m->dokumen_mitra as $dokumen)
                                                         <li>
@@ -72,6 +73,10 @@
                                                         <li>Tidak Ada Dokumen!</li>
                                                     @endforelse
                                                 </ul>
+                                                @endcan
+                                                @cannot('detail mitra')
+                                                    Tidak dapat melihat dokumen!
+                                                @endcannot
                                             </td>
                                             <td>
                                                 <span class="badge badge-{{ $m->status == 'a' ? 'success' : 'danger' }}">{{ $m->status == 'a' ? 'Aktif' : 'Nonaktif' }}</span>
@@ -83,9 +88,12 @@
                                                 {{ $m->detail_mitra_pelanggan_count }} Pelanggan
                                             </td>
                                             <td>
+                                                @can('detail mitra')
                                                 <a href="{{ route('mitra.show', $m->id_mitra) }}" class="btn btn-link m-0 p-0">
                                                     <i class="ti-eye text-primary font-weight-bold"></i>
                                                 </a>
+                                                @endcan
+                                                @can('hapus mitra')
                                                 <form action="{{ route('mitra.destroy', $m->id_mitra) }}" method="post" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
@@ -93,6 +101,7 @@
                                                         <i class="ti-trash text-danger font-weight-bold"></i>
                                                     </button>
                                                 </form>
+                                                @endcan
                                             </td>
                                         </tr>
                                     @empty

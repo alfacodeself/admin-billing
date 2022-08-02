@@ -51,6 +51,14 @@
                                     <span class="hidden-xs-down">Bagi Hasil</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#jenisbayar" role="tab">
+                                    <span class="hidden-sm-up">
+                                        <i class="ti-bookmark-alt"></i>
+                                    </span>
+                                    <span class="hidden-xs-down">Jenis Pembayaran</span>
+                                </a>
+                            </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="pengaturanGeneral" role="tabpanel">
@@ -240,6 +248,84 @@
                                                                         <i class="ti-pencil-alt text-warning font-weight-bold"></i>
                                                                     </button>
                                                                     <form action="{{ route('bagi-hasil.delete', $b->id_pengaturan_bagi_hasil) }}" method="post" class="d-inline">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit" class="btn btn-link m-0 p-0">
+                                                                            <i class="ti-trash text-danger font-weight-bold"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                        @empty
+                                                            <tr>
+                                                                <td colspan="6" class="text-center">Tidak ada data pengaturan bagi hasil!</td>
+                                                            </tr>
+                                                        @endforelse
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane p-20" id="jenisbayar" role="tabpanel">
+                                <div class="custom-tab user-profile-tab">
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        <li role="presentation" class="active">
+                                            <a aria-controls="1" role="tab" data-toggle="tab">Jenis Bayar</a>
+                                            <button class="btn btn-link p-0 m-0" data-toggle="modal"
+                                                data-target="#tambahModalJenis">
+                                                <i class="ti-plus text-primary font-weight-bold"></i>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div role="tabpanel" class="tab-pane active" id="1">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover table-stripped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>Jenis Pembayaran</th>
+                                                            <th>Besaran</th>
+                                                            <th>Jenis Biaya</th>
+                                                            <th>Status</th>
+                                                            <th>Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @forelse ($jenis_bayar as $j)
+                                                            <tr>
+                                                                <th scope="row">{{ $loop->iteration }}</th>
+                                                                <td>{{ $j->jenis_pembayaran }}</td>
+                                                                <td>{{ $j->harga }}</td>
+                                                                <td>{{ $j->jenis_biaya == 'p'? 'Presentase' : 'Flat' }}</td>
+                                                                <td>
+                                                                    <div class="checkbox switcher">
+                                                                        <label for="test">
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                class="change"
+                                                                                data-set="{{ $j->id_jenis_pembayaran }}"
+                                                                                data-type="jenis_bayar"
+                                                                                {{ $j->status == 'a' ? 'checked' : '' }}>
+                                                                            <span><small></small></span>
+                                                                        </label>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <button
+                                                                        type="button"
+                                                                        class="btn btn-link m-0 p-0"
+                                                                        data-toggle="modal"
+                                                                        data-target="#updateModalJenis"
+                                                                        data-jenisbayar="{{ $j->jenis_pembayaran }}"
+                                                                        data-harga="{{ $j->harga }}"
+                                                                        data-jenisbiaya="{{ $j->jenis_biaya }}"
+                                                                        data-route="{{ route('jenis-bayar.update', $j->id_jenis_pembayaran) }}">
+                                                                        <i class="ti-pencil-alt text-warning font-weight-bold"></i>
+                                                                    </button>
+                                                                    <form action="{{ route('jenis-bayar.delete', $j->id_jenis_pembayaran) }}" method="post" class="d-inline">
                                                                         @csrf
                                                                         @method('DELETE')
                                                                         <button type="submit" class="btn btn-link m-0 p-0">
@@ -463,6 +549,95 @@
             </div>
         </div>
     </div>
+    {{-- modal jenis bayar --}}
+    <div class="modal fade" id="tambahModalJenis" tabindex="-1" role="dialog" aria-labelledby="tambahCategory"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Jenis Pembayaran</h5>
+                </div>
+                <form action="{{ route('jenis-bayar.store') }}" method="post">
+                    @csrf
+                    @method('POST')
+                    <div class="modal-body px-4">
+                        <div class="form-group">
+                            <label for="jenis_bayar">Jenis Pembayaran</label>
+                            <input type="text" class="form-control" id="jenis_bayar" name="jenis_bayar" placeholder="">
+                            @error('jenis_bayar')
+                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="besaran">Besaran</label>
+                            <input type="number" class="form-control" id="besaran" name="besaran" placeholder="">
+                            @error('besaran')
+                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="jenis">Jenis Biaya</label>
+                            <select name="jenis" id="jenis" class="form-control">
+                                <option value="p">Persentase</option>
+                                <option value="f">Flat</option>
+                            </select>
+                            @error('jenis')
+                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Buat Jenis Pembayaran</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="updateModalJenis" tabindex="-1" role="dialog" aria-labelledby="tambahCategory"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ubah Jenis Pembayaran</h5>
+                </div>
+                <form action="" method="post" class="modal-route">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body px-4">
+                        <div class="form-group">
+                            <label for="jenis_bayar">Jenis Pembayaran</label>
+                            <input type="text" class="form-control modal-jenisBayar" id="jenis_bayar" name="jenis_bayar" placeholder="">
+                            @error('jenis_bayar')
+                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="besaran">Besaran</label>
+                            <input type="number" class="form-control modal-harga" id="besaran" name="besaran" placeholder="">
+                            @error('besaran')
+                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="jenis">Jenis Biaya</label>
+                            <select name="jenis" id="jenis" class="form-control modal-jenisBiaya">
+                                <option value="p">Persentase</option>
+                                <option value="f">Flat</option>
+                            </select>
+                            @error('jenis')
+                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Ubah Jenis Pembayaran</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 @push('css')
     <style>
@@ -509,6 +684,21 @@
 @endpush
 @push('js')
     <script>
+        $('#updateModalJenis').on('show.bs.modal', function(event){
+            const button = $(event.relatedTarget)
+
+            let jenisBayar = button.data('jenisbayar');
+            let harga = button.data('harga');
+            let jenisBiaya = button.data('jenisbiaya');
+            let route = button.data('route');
+
+            console.log(jenisBayar, jenisBiaya);
+            let modal = $(this)
+            modal.find('.modal-route').attr('action', route)
+            modal.find('.modal-jenisBayar').val(jenisBayar)
+            modal.find('.modal-harga').val(harga);
+            modal.find('.modal-jenisBiaya').val(jenisBiaya);
+        });
         $('#updateModalBagi').on('show.bs.modal', function(event){
             const button = $(event.relatedTarget)
 

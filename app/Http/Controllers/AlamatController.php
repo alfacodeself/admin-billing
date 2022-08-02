@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\JenisDokumen;
 use Illuminate\Http\Request;
 use App\Models\DetailBagiHasil;
+use App\Models\JenisPembayaran;
 use App\Models\MetodePembayaran;
 use Illuminate\Support\Facades\DB;
 use App\Models\PengaturanBagiHasil;
@@ -39,6 +40,9 @@ class AlamatController extends Controller
                         break;
                     case 'jenis_dokumen':
                         $model = JenisDokumen::where('id_jenis_dokumen', $request->value)->firstOrFail();
+                        break;
+                    case 'jenis_bayar':
+                        $model = JenisPembayaran::where('id_jenis_pembayaran', $request->value)->firstOrFail();
                         break;
                     default:
                         break;

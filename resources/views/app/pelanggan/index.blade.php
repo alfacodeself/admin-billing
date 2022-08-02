@@ -30,9 +30,11 @@
                 </h4>
                 <br>
                 <div class="card-body">
+                    @can('tambah pelanggan')
                     <a href="{{ route('pelanggan.create') }}" class="btn btn-outline-primary">
                         <i class="ti-plus font-weight-bold"></i> Tambah Pelanggan
                     </a>
+                    @endcan
                     <a href="" class="btn btn-outline-info float-right">
                         <i class="ti-printer"></i> Cetak
                     </a>
@@ -60,24 +62,32 @@
                                     </td>
                                     <td>
                                         <ul>
-                                            @forelse ($p->dokumen_pelanggan as $dokumen)
-                                            <li>
-                                                @if ($dokumen->jenis_dokumen->status == 'a')
-                                                    <a href="{{ url($dokumen->path_dokumen) }}" target="__blank" class="text-primary">{{ $dokumen->jenis_dokumen->nama_dokumen }}</a>
-                                                @endif
-                                            </li>
-                                            @empty
-                                            <li>Tidak memiliki dokumen</li>
-                                            @endforelse
+                                            @can('detail pelanggan')
+                                                @forelse ($p->dokumen_pelanggan as $dokumen)
+                                                <li>
+                                                    @if ($dokumen->jenis_dokumen->status == 'a')
+                                                        <a href="{{ url($dokumen->path_dokumen) }}" target="__blank" class="text-primary">{{ $dokumen->jenis_dokumen->nama_dokumen }}</a>
+                                                    @endif
+                                                </li>
+                                                @empty
+                                                <li>Tidak memiliki dokumen</li>
+                                                @endforelse
+                                            @endcan
                                         </ul>
+                                        @cannot('detail pelanggan')
+                                            Anda tidak dapat melihat dokumen!
+                                        @endcannot
                                     </td>
                                     <td>
                                         <span class="badge badge-{{ $p->status == 'a' ? 'success' : 'danger' }}">{{ $p->status == 'a' ? 'aktif' : 'nonaktif' }}</span>
                                     </td>
                                     <td>
+                                        @can('detail pelanggan')
                                         <a href="{{ route('pelanggan.show', $p->id_pelanggan) }}" class="btn btn-link m-0 p-0">
                                             <i class="ti-eye text-primary font-weight-bold"></i>
                                         </a>
+                                        @endcan
+                                        @can('hapus pelanggan')
                                         <form action="{{ route('pelanggan.destroy', $p->id_pelanggan) }}" method="post" class="d-inline">
                                             @csrf
                                             @method('DELETE')
@@ -85,6 +95,7 @@
                                                 <i class="ti-trash text-danger font-weight-bold"></i>
                                             </button>
                                         </form>
+                                        @endcan
                                     </td>
                                 </tr>
                                 @empty

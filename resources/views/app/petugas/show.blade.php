@@ -31,9 +31,11 @@
                     <div class="card-body pt-0">
                         <h5 class="card-title">{{ $petugas->nama_petugas }}</h5>
                         <p class="card-text">{{ 'Admin' }} Pelanggan</p>
+                        @can('edit petugas')
                         <button class="btn btn-primary" data-toggle="modal" data-target="#fotoModal">
                             Ubah Foto Petugas
                         </button>
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -64,10 +66,12 @@
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li role="presentation" class="active">
                                             <a aria-controls="1" role="tab" data-toggle="tab">Tentang</a>
+                                            @can('edit petugas')
                                             <button class="btn btn-link p-0 m-0" data-toggle="modal"
-                                                data-target="#profilModal">
+                                            data-target="#profilModal">
                                                 <i class="ti-pencil-alt text-primary font-weight-bold"></i>
                                             </button>
+                                            @endcan
                                         </li>
                                     </ul>
                                     <div class="tab-content">
@@ -109,10 +113,9 @@
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li role="presentation" class="active">
                                             <a aria-controls="1" role="tab" data-toggle="tab">Histori Jabatan</a>
-                                            <button class="btn btn-link p-0 m-0" data-toggle="modal"
-                                                data-target="#jabatanModal">
-                                                <i class="ti-pencil-alt text-primary font-weight-bold"></i>
-                                            </button>
+                                            <a href="{{ route('pengaturan.rolepermission.edit', $petugas->id_petugas) }}" class="btn btn-link p-0 m-0">
+                                                <i class="ti-eye text-primary font-weight-bold"></i>
+                                            </a>
                                         </li>
                                     </ul>
                                     <div class="tab-content">
@@ -164,7 +167,8 @@
         </div>
     </section>
     {{-- ===============> Modal Section <======================= --}}
-    <div class="modal fade" id="profilModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    @can('edit petugas')
+        <div class="modal fade" id="profilModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -267,39 +271,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="jabatanModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Ubah Jabatan Petugas</h5>
-                </div>
-                <form action="{{ route('petugas.show.update-jabatan', $petugas->id_petugas) }}" method="post">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="jabatan">Ganti Jabatan Petugas</label>
-                            <select name="jabatan" id="jabatan" class="form-control">
-                                @forelse ($jabatan as $j)
-                                    <option value="{{ $j->id_jenis_jabatan }}">{{ $j->nama_jabatan }}</option>
-                                @empty
-                                    <option disabled selected>Tidak ada jabatan</option>
-                                @endforelse
-                            </select>
-                            @error('jabatan')
-                            <small><strong class="text-danger">{{ $message }}</strong></small>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Ubah Jabatan Petugas</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    @endcan
 @endsection
 @push('css')
     <style>

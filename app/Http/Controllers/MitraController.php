@@ -206,12 +206,15 @@ class MitraController extends Controller
     {
         $mitra = Mitra::where('id_mitra', $id)->firstOrFail();
         try {
-            if ($mitra->foto !== null) @unlink(public_path($mitra->foto));
-            foreach ($mitra->dokumen_mitra as $dokumen) {
-                if ($dokumen->path_dokumen !== null) @unlink(public_path($dokumen->path_dokumen));
-            }
-            $mitra->delete();
-            return redirect()->route('mitra.index', $mitra->id_mitra)->with('success', 'Berhasil menghapus mitra!');
+            // if ($mitra->foto !== null) @unlink(public_path($mitra->foto));
+            // foreach ($mitra->dokumen_mitra as $dokumen) {
+            //     if ($dokumen->path_dokumen !== null) @unlink(public_path($dokumen->path_dokumen));
+            // }
+            // $mitra->delete();
+            $mitra->update([
+                'status' => 'n'
+            ]);
+            return redirect()->route('mitra.index', $mitra->id_mitra)->with('success', 'Berhasil menonaktifkan mitra!');
         } catch (\Throwable $th) {
             return $th->getMessage();
         }

@@ -30,9 +30,11 @@
                 </h4>
                 <br>
                 <div class="card-body">
+                    @can('tambah petugas')
                     <a href="{{ route('petugas.create') }}" class="btn btn-outline-primary">
                         <i class="ti-plus font-weight-bold"></i> Tambah Petugas
                     </a>
+                    @endcan
                     <div class="table-responsive">
                         <table class="table table-hover table-stripped">
                             <thead>
@@ -64,9 +66,9 @@
                                             <a href="{{ route('petugas.show', $p->id_petugas) }}" class="btn btn-link m-0 p-0">
                                                 <i class="ti-eye text-primary font-weight-bold"></i>
                                             </a>
-                                            <a href="" class="btn btn-link m-0 p-0">
+                                            {{-- <a href="" class="btn btn-link m-0 p-0">
                                                 <i class="ti-trash text-danger font-weight-bold"></i>
-                                            </a>
+                                            </a> --}}
                                         </td>
                                     </tr>
                                 @empty

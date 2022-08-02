@@ -30,9 +30,11 @@
                 </h4>
                 <br>
                 <div class="card-body">
+                    @can('tambah transaksi')
                     <a href="{{ route('transaksi.create') }}" class="btn btn-outline-primary">
                         <i class="ti-plus font-weight-bold"></i> Buat Transaksi
                     </a>
+                    @endcan
                     <div class="table-responsive">
                         <table class="table table-hover table-stripped">
                             <thead>
@@ -74,9 +76,11 @@
                                         {{ $t->tanggal_transaksi }}
                                     </td>
                                     <td>
+                                        @can('detail transaksi')
                                         <a href="{{ route('transaksi.show', $t->id_transaksi) }}" class="btn btn-link m-0 p-0">
                                             <i class="ti-eye text-primary font-weight-bold"></i>
                                         </a>
+                                        @endcan
                                     </td>
                                 </tr>
                                 @empty

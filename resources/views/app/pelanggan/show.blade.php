@@ -31,8 +31,11 @@
                     <div class="card-body pt-0">
                         <h5 class="card-title">{{ $pelanggan->nama_pelanggan }}</h5>
                         <p class="card-text">{{ $pelanggan->alamat }}</p>
+                        @can('edit pelanggan')
                         <button class="btn btn-primary" data-toggle="modal" data-target="#fotoModal">Ubah Foto
-                            Pelanggan</button>
+                            Pelanggan
+                        </button>
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -71,10 +74,12 @@
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li role="presentation" class="active">
                                             <a aria-controls="1" role="tab" data-toggle="tab">Tentang</a>
+                                            @can('edit pelanggan')
                                             <button class="btn btn-link p-0 m-0" data-toggle="modal"
-                                                data-target="#profilModal">
+                                            data-target="#profilModal">
                                                 <i class="ti-pencil-alt text-primary font-weight-bold"></i>
                                             </button>
+                                            @endcan
                                         </li>
                                     </ul>
                                     <div class="tab-content">
@@ -120,10 +125,12 @@
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li role="presentation" class="active">
                                             <a aria-controls="1" role="tab" data-toggle="tab">Alamat</a>
+                                            @can('edit pelanggan')
                                             <button class="btn btn-link p-0 m-0" data-toggle="modal"
-                                                data-target="#alamatModal">
+                                            data-target="#alamatModal">
                                                 <i class="ti-pencil-alt text-primary font-weight-bold"></i>
                                             </button>
+                                            @endcan
                                         </li>
                                     </ul>
                                     <div class="tab-content">
@@ -172,10 +179,12 @@
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li role="presentation" class="active">
                                             <a aria-controls="1" role="tab" data-toggle="tab">Dokumen</a>
+                                            @can('edit pelanggan')
                                             <button class="btn btn-link p-0 m-0" data-toggle="modal"
-                                                data-target="#dokumenModal">
+                                            data-target="#dokumenModal">
                                                 <i class="ti-pencil-alt text-primary font-weight-bold"></i>
                                             </button>
+                                            @endcan
                                         </li>
                                     </ul>
                                     <div class="tab-content">
@@ -208,7 +217,8 @@
         </div>
     </section>
     {{-- ===============> Modal Section <======================= --}}
-    <div class="modal fade" id="dokumenModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    @can('edit pelanggan')
+        <div class="modal fade" id="dokumenModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -253,8 +263,9 @@
                 <div class="modal-header">
                     <h5 class="modal-title">Ubah Alamat Pelanggan</h5>
                 </div>
-                <form action="" method="post" class="form-horizontal">
+                <form action="{{ route('pelanggan.show.update-alamat', $pelanggan->id_pelanggan) }}" method="post" class="form-horizontal">
                     @csrf
+                    @method('PUT')
                     <div class="modal-body px-5">
                         <div class="row">
                             <div class="col-md-6">
@@ -474,6 +485,7 @@
             </div>
         </div>
     </div>
+    @endcan
 @endsection
 @push('css')
     <style>
@@ -517,7 +529,8 @@
         }
     </style>
 @endpush
-@push('js')
+@can('edit pelanggan')
+    @push('js')
     <script>
         const userLat = {{ $pelanggan->latitude == null ? '-7.756928' : $pelanggan->latitude }};
         const userLng = {{ $pelanggan->longitude == null ? '113.211502' : $pelanggan->longitude }};
@@ -654,3 +667,4 @@
         }
     </script>
 @endpush
+@endcan

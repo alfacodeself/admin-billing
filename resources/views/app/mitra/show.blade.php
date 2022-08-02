@@ -31,9 +31,11 @@
                     <div class="card-body pt-0">
                         <h5 class="card-title">{{ $mitra->nama_mitra }}</h5>
                         <p class="card-text">{{ $mitra->detail_mitra_pelanggan_count }} Pelanggan</p>
+                        @can('edit mitra')
                         <button class="btn btn-primary" data-toggle="modal" data-target="#fotoModal">
                             Ubah Foto Mitra
                         </button>
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -72,10 +74,12 @@
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li role="presentation" class="active">
                                             <a aria-controls="1" role="tab" data-toggle="tab">Tentang</a>
+                                            @can('edit mitra')
                                             <button class="btn btn-link p-0 m-0" data-toggle="modal"
-                                                data-target="#profilModal">
+                                            data-target="#profilModal">
                                                 <i class="ti-pencil-alt text-primary font-weight-bold"></i>
                                             </button>
+                                            @endcan
                                         </li>
                                     </ul>
                                     <div class="tab-content">
@@ -165,9 +169,14 @@
                                                                     </td>
                                                                     <td>{{ $mitraPelanggan->tanggal_masuk }}</td>
                                                                     <td>
+                                                                        @can('detail pelanggan')
                                                                         <a href="{{ route('pelanggan.show', $mitraPelanggan->pelanggan->id_pelanggan) }}" class="btn btn-link m-0 p-0">
                                                                             <i class="ti-eye text-primary font-weight-bold"></i>
                                                                         </a>
+                                                                        @endcan
+                                                                        @cannot('detail pelanggan')
+                                                                            No Access
+                                                                        @endcannot
                                                                     </td>
                                                                 </tr>
                                                             @empty
@@ -187,10 +196,12 @@
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li role="presentation" class="active">
                                             <a aria-controls="1" role="tab" data-toggle="tab">Dokumen</a>
+                                            @can('edit mitra')
                                             <button class="btn btn-link p-0 m-0" data-toggle="modal"
-                                                data-target="#dokumenModal">
+                                            data-target="#dokumenModal">
                                                 <i class="ti-pencil-alt text-primary font-weight-bold"></i>
                                             </button>
+                                            @endcan
                                         </li>
                                     </ul>
                                     <div class="tab-content">
@@ -225,7 +236,8 @@
         </div>
     </section>
     {{-- ===============> Modal Section <======================= --}}
-    <div class="modal fade" id="dokumenModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    @can('edit mitra')
+        <div class="modal fade" id="dokumenModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -366,6 +378,7 @@
             </div>
         </div>
     </div>
+    @endcan
 @endsection
 @push('css')
     <style>

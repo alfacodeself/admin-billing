@@ -24,9 +24,11 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-title">
+                    @can('tambah jadwal langganan')
                     <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#tambahModal">
                         <i class="ti-plus font-weight-bold"></i> Tambah Jadwal Pemasangan
                     </button>
+                    @endcan
                 </div>
                 <div class="card-body">
                     <div id="calendar-schedule"></div>
@@ -37,7 +39,8 @@
 
 {{-- ====================> Modal <==================== --}}
 {{-- ===========> Tambah Modal <============== --}}
-    <div class="modal fade" id="tambahModal" tabindex="-1" role="dialog" aria-labelledby="editCategory"
+    @can('tambah jadwal langganan')
+        <div class="modal fade" id="tambahModal" tabindex="-1" role="dialog" aria-labelledby="editCategory"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -57,7 +60,7 @@
                                         <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
                                     @enderror
                                     <label for="tanggal_pengajuan">Tanggal Pengajuan</label>
-                                    <input type="date" name="tanggal_pengajuan" value="{{ old('tanggal_pengajuan') }}" id="tanggal_pengajuan" class="form-control">
+                                    <input type="date" name="tanggal_pengajuan" value="{{ old('tanggal_pengajuan', date('Y-m-d')) }}" id="tanggal_pengajuan" class="form-control">
                                     @error('tanggal_pengajuan')
                                         <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
                                     @enderror
@@ -89,6 +92,7 @@
             </div>
         </div>
     </div>
+    @endcan
     {{-- ======> Calender Modal <======== --}}
     <div class="modal fade" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -252,6 +256,7 @@
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyCWY-q7-nQ4ESJpVa1Jx4ErwzDCoJ73cAo&libraries=&v=weekly">
     </script>
+    @can('tambah jadwal langganan')
     <script>
         function search() {
             let jenis = $('#langganan').val();
@@ -282,6 +287,7 @@
             })
         }
     </script>
+    @endcan
 @endpush
 @push('css')
     <link href="{{ asset('assets/css/lib/calendar/main.css') }}" rel="stylesheet" type="text/css" />

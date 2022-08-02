@@ -23,7 +23,7 @@
 @include('partials.my-alert')
 <section id="main-content">
     <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-{{ auth()->user()->can('tambah kategori') ? '7' : '12' }} }}">
             <div class="card">
                 <h4 class="card-title font-weight-bold">
                     Data Kategori
@@ -49,24 +49,28 @@
                                         <span class="badge badge-{{ $k->status == 'a' ? 'success' : 'danger' }}">{{ $k->status == 'a' ? 'aktif' : 'nonaktif' }}</span>
                                     </td>
                                     <td>
-                                        <button
-                                            type="button"
-                                            class="btn btn-link m-0 p-0"
-                                            data-toggle="modal"
-                                            data-target="#editModal"
-                                            data-id="{{ $k->id_kategori }}"
-                                            data-kategori="{{ $k->nama_kategori }}"
-                                            data-status="{{ $k->status }}"
-                                            data-route="{{ route('kategori.update', $k->id_kategori) }}">
-                                            <i class="ti-pencil-alt text-warning font-weight-bold"></i>
-                                        </button>
-                                        <form action="{{ route('kategori.destroy', $k->id_kategori) }}" method="post" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-link m-0 p-0">
-                                                <i class="ti-trash text-danger font-weight-bold"></i>
+                                        @can('edit kategori')
+                                            <button
+                                                type="button"
+                                                class="btn btn-link m-0 p-0"
+                                                data-toggle="modal"
+                                                data-target="#editModal"
+                                                data-id="{{ $k->id_kategori }}"
+                                                data-kategori="{{ $k->nama_kategori }}"
+                                                data-status="{{ $k->status }}"
+                                                data-route="{{ route('kategori.update', $k->id_kategori) }}">
+                                                <i class="ti-pencil-alt text-warning font-weight-bold"></i>
                                             </button>
-                                        </form>
+                                        @endcan
+                                        @can('hapus kategori')
+                                            <form action="{{ route('kategori.destroy', $k->id_kategori) }}" method="post" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-link m-0 p-0">
+                                                    <i class="ti-trash text-danger font-weight-bold"></i>
+                                                </button>
+                                            </form>
+                                        @endcan
                                     </td>
                                 </tr>
                                 @empty
@@ -83,6 +87,7 @@
                 </div>
             </div>
         </div>
+        @can('tambah kategori')
         <div class="col-md-5">
             <div class="card">
                 <h4 class="card-title text-center font-weight-bold">Buat Kategori Baru</h4>
@@ -112,9 +117,11 @@
                 </div>
             </div>
         </div>
+        @endcan
     </div>
 </section>
 {{-- Modals --}}
+@can('edit kategori')
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editCategory" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -151,21 +158,24 @@
         </div>
     </div>
 </div>
+@endcan
 @endsection
+@can('edit kategori')
 @push('js')
-    <script>
-        $('#editModal').on('show.bs.modal', function (event) {
-            const button = $(event.relatedTarget)
-            let id = button.data('id')
-            let kategori = button.data('kategori')
-            let status = button.data('status')
-            let route = button.data('route')
+<script>
+    $('#editModal').on('show.bs.modal', function (event) {
+        const button = $(event.relatedTarget)
+        let id = button.data('id')
+        let kategori = button.data('kategori')
+        let status = button.data('status')
+        let route = button.data('route')
 
-            let modal = $(this)
-            modal.find('.modal-title').text('Edit Kategori - ' + kategori)
-            modal.find('.modal-category').val(kategori)
-            modal.find('.modal-status').val(status)
-            modal.find('.modal-form').attr('action', route);
-        });
-    </script>
+        let modal = $(this)
+        modal.find('.modal-title').text('Edit Kategori - ' + kategori)
+        modal.find('.modal-category').val(kategori)
+        modal.find('.modal-status').val(status)
+        modal.find('.modal-form').attr('action', route);
+    });
+</script>
 @endpush
+@endcan

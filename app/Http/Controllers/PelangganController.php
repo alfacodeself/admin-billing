@@ -212,15 +212,58 @@ class PelangganController extends Controller
             return redirect()->route('pelanggan.show', $pelanggan->id_pelanggan)->with('error', 'Gagal mengubah dokumen pelanggan ' . $th->getMessage());
         }
     }
+    public function updateAlamat(Request $request, $id)
+    {
+        $request->validate([
+            'desa' => 'required',
+            'rt' => 'required|numeric|min:1',
+            'rw' => 'required|numeric|min:1',
+            'alamat' => 'required',
+            'latitude' => 'required',
+            'longitude' => 'required'
+        ], [
+            'desa.required' => 'Desa tidak boleh kosong!',
+            'rt.required' => 'RT tidak boleh kosong!',
+            'rt.numeric' => 'RT harus berupa angka!',
+            'rt.min' => 'RT minimal 1',
+            'rw.required' => 'RW tidak boleh kosong!',
+            'rw.numeric' => 'RW harus berupa angka!',
+            'rw.min' => 'RW minimal 1',
+            'alamat.required' => 'Alamat tidak boleh kosong!',
+            'latitude' => 'Harap pilih tempat pada map!',
+            'longitude' => 'Harap pilih tempat pada map!',
+        ]);
+        // dd($request->all());
+        $desa = DB::table('desa')->select('id_desa')->where('id_desa', $request->desa)->where('status', 'a')->first();
+        // dd($desa);
+        if ($desa == null) {
+            return redirect()->back()->with('danger', 'Desa tidak ditemukan');
+        }
+        try {
+            $pelanggan = Pelanggan::where('id_pelanggan', $id)->firstOrFail();
+            // dd($pelanggan);
+            $pelanggan->update([
+                'id_desa' => $desa->id_desa,
+                'rt' => $request->rt,
+                'rw' => $request->rw,
+                'alamat' => $request->alamat,
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+            ]);
+            return redirect()->route('pelanggan.show', $pelanggan->id_pelanggan)->with('success', 'Berhasil mengubah alamat pelanggan!');
+        } catch (\Throwable $th) {
+            return redirect()->route('pelanggan.show', $pelanggan->id_pelanggan)->with('error', 'Gagal mengubah alamat pelanggan ' . $th->getMessage());
+        }
+    }
     public function destroy($id)
     {
-        $pelanggan = Pelanggan::where('id_pelanggan', $id)->firstOrFail();
         try {
-            if ($pelanggan->foto !== null) @unlink(public_path($pelanggan->foto));
-            foreach ($pelanggan->dokumen_pelanggan as $dokumen) {
-                if ($dokumen->path_dokumen !== null) @unlink(public_path($dokumen->path_dokumen));
-            }
-            $pelanggan->delete();
+            $pelanggan = Pelanggan::where('id_pelanggan', $id)->firstOrFail();
+            // if ($pelanggan->foto !== null) @unlink(public_path($pelanggan->foto));
+            // foreach ($pelanggan->dokumen_pelanggan as $dokumen) {
+            //     if ($dokumen->path_dokumen !== null) @unlink(public_path($dokumen->path_dokumen));
+            // }
+            $pelanggan->update(['status' => 'n']);
             return redirect()->route('pelanggan.index')->with('success', 'Berhasil menghapus pelanggan!');
         } catch (\Throwable $th) {
             return redirect()->route('pelanggan.index')->with('error', 'Gagal menghapus pelanggan ' . $th->getMessage());

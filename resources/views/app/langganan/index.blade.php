@@ -30,9 +30,11 @@
                 </h4>
                 <br>
                 <div class="card-body">
+                    @can('tambah langganan')
                     <a href="{{ route('langganan.create') }}" class="btn btn-outline-primary">
                         <i class="ti-plus font-weight-bold"></i> <span class="d-none d-md-inline">Tambah Langganan</span>
                     </a>
+                    @endcan
                     <a href="{{ route('langganan.create') }}" class="btn btn-outline-info float-right">
                         <i class="ti-printer"></i> <span class="d-none d-md-inline">Cetak</span>
                     </a>
@@ -62,13 +64,15 @@
                                         {{ $l->lama_berlangganan }}
                                     </td>
                                     <td>
-                                        {{ Str::limit($l->alamat_pemasangan, 20, '...') }}  
+                                        {{ Str::limit($l->alamat_pemasangan, 20, '...') }}
                                     </td>
                                     <td>
                                         @if ($l->status == "pn")
                                             <span class="badge badge-warning">Pengajuan</span>
                                         @elseif($l->status == "dt" || $l->status == "n")
                                             <span class="badge badge-warning">{{ $l->status == "dt" ? 'Ditolak' : 'Nonaktif' }}</span>
+                                        @elseif($l->status == "pmi")
+                                            <span class="badge badge-warning">Pemasangan Instalasi</span>
                                         @elseif ($l->status == "a" || $l->status == 'dtr')
                                             <span class="badge badge-success">{{ $l->status == 'a' ? 'Aktif' : 'Diterima' }}</span>
                                         @endif
@@ -80,9 +84,11 @@
                                         <button type="button" class="btn btn-link m-0 p-0" data-toggle="modal" data-target="#emailModal">
                                             <i class="ti-email text-info font-weight-bold"></i>
                                         </button>
+                                        @can('detail langganan')
                                         <a href="{{ route('langganan.show', $l->id_langganan) }}" class="btn btn-link m-0 p-0">
                                             <i class="ti-eye text-primary font-weight-bold"></i>
                                         </a>
+                                        @endcan
                                     </td>
                                 </tr>
                                 @empty

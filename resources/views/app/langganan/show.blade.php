@@ -58,10 +58,6 @@
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li role="presentation" class="active">
                                             <a aria-controls="1" role="tab" data-toggle="tab">Detail Langganan</a>
-                                            <button class="btn btn-link p-0 m-0" data-toggle="modal"
-                                                data-target="#profilModal">
-                                                <i class="ti-pencil-alt text-primary font-weight-bold"></i>
-                                            </button>
                                         </li>
                                     </ul>
                                     <div class="tab-content">
@@ -144,9 +140,11 @@
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li role="presentation" class="active">
                                             <a aria-controls="1" role="tab" data-toggle="tab">Pelanggan</a>
+                                            @can('detail pelanggan')
                                             <a href="{{ route('pelanggan.show', $langganan->id_pelanggan) }}" class="btn btn-link p-0 m-0">
                                                 <i class="ti-eye text-primary font-weight-bold"></i>
                                             </a>
+                                            @endcan
                                         </li>
                                     </ul>
                                     <div class="tab-content">

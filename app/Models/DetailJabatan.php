@@ -23,4 +23,8 @@ class DetailJabatan extends Model
     {
         return $this->belongsTo(JenisJabatan::class, 'id_jenis_jabatan');
     }
+    public function detail_permission()
+    {
+        return $this->hasMany(DetailPermission::class, 'id_detail_jabatan');
+    }
 }

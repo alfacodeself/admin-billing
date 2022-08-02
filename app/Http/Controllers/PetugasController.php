@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\DetailJabatan;
+use App\Models\DetailPermission;
 use Carbon\Carbon;
 use App\Models\Petugas;
 use Illuminate\Support\Str;
 use App\Models\JenisJabatan;
+use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -147,19 +149,32 @@ class PetugasController extends Controller
     }
     public function updateJabatan($id, Request $request)
     {
-        $petugas = DetailJabatan::where('id_petugas', $id)->where('status', 'a')->firstOrFail();
+        $petugas = DetailJabatan::with('detail_permission')->where('id_petugas', $id)->where('status', 'a')->firstOrFail();
         $request->validate([
-            'jabatan' => 'required'
+            'jabatan' => 'required',
+            'permission' => 'required'
         ], [
             'jabatan.required' => 'Jabatan tidak boleh kosong!',
         ]);
         $jabatan = JenisJabatan::where('id_jenis_jabatan', $request->jabatan)->first();
+        $permission = Permission::whereIn('id_permission', $request->permission)->get();
         if ($jabatan == null) {
             return redirect()->back()->with('danger', 'Jabatan tidak di temukan!');
-        }elseif ($jabatan->id_jenis_jabatan == $petugas->id_jenis_jabatan) {
-            return redirect()->back()->with('warning', 'Petugas saat ini sudah memiliki jabatan yang dipilih!');
+        }
+        // elseif ($jabatan->id_jenis_jabatan == $petugas->id_jenis_jabatan) {
+        //     return redirect()->back()->with('warning', 'Petugas saat ini sudah memiliki jabatan yang dipilih!');
+        // }
+        if ($permission->count() != count($request->permission)) {
+            return redirect()->back()->with('danger', 'ID permission bermasalah!');
         }
         try {
+            $petugas->update(['status' => 'n']);
+            $nowPermission = $petugas->detail_permission->where('id_detail_jabatan', $petugas->id_detail_jabatan)->where('status', 'a');
+            if ($nowPermission->count() != 0) {
+                foreach ($nowPermission as $n) {
+                    $n->update(['status' => 'n']);
+                }
+            }
             $check = DB::table('detail_jabatan')->select(DB::raw('MAX(RIGHT(id_detail_jabatan, 4)) AS kode'));
             if ($check->count() > 0) {
                 foreach ($check->get() as $c) {
@@ -169,17 +184,49 @@ class PetugasController extends Controller
             } else {
                 $code = "0001";
             }
-            $petugas->update(['status' => 'n']);
-            DetailJabatan::create([
+            $detail_jabatan = DetailJabatan::create([
                 'id_detail_jabatan' => 'DJ' . $code,
                 'id_jenis_jabatan' => $jabatan->id_jenis_jabatan,
                 'id_petugas' => $petugas->id_petugas,
                 'status' => 'a',
                 'tanggal_jabatan' => Carbon::now()
             ]);
-            return redirect()->route('petugas.show', $petugas->id_petugas)->with('success', 'Berhasil mengubah jabatan petugas!');
+            foreach ($permission as $p) {
+                $check2 = DB::table('detail_permission')->select(DB::raw('MAX(RIGHT(id_detail_permission, 5)) AS kode'));
+                if ($check2->count() > 0) {
+                    foreach ($check2->get() as $c) {
+                        $temp = ((int) $c->kode) + 1;
+                        $code = sprintf("%'.05d", $temp);
+                    }
+                } else {
+                    $code = "00001";
+                }
+                DetailPermission::create([
+                    'id_detail_permission' => 'DPERM' . $code,
+                    'id_permission' => $p->id_permission,
+                    'id_detail_jabatan' => $detail_jabatan->id_detail_jabatan,
+                    'status' => 'a',
+                    'tanggal_permission' => Carbon::now()
+                ]);
+            }
+            return redirect()->route('pengaturan.rolepermission.index')->with('success', 'Berhasil mengubah jabatan petugas!');
         } catch (\Throwable $th) {
-            return redirect()->route('petugas.show')->with('error', 'Gagal mengubah jabatan petugas ' . $th->getMessage());
+            return redirect()->route('pengaturan.rolepermission.edit', $petugas->id_petugas)->with('error', 'Gagal mengubah jabatan petugas! ' . $th->getMessage());
+        }
+    }
+    public function offPermission($id)
+    {
+        $petugas = DetailJabatan::with('detail_permission')->where('id_petugas', $id)->where('status', 'a')->firstOrFail();
+        try {
+            $nowPermission = $petugas->detail_permission->where('status', 'a');
+            if ($nowPermission->count() != 0) {
+                foreach ($nowPermission as $n) {
+                    $n->update(['status' => 'n']);
+                }
+            }
+            return redirect()->route('pengaturan.rolepermission.index')->with('success', 'Berhasil menghapus semua permission petugas!');
+        } catch (\Throwable $th) {
+            return redirect()->route('pengaturan.rolepermission.edit', $petugas->id_petugas)->with('error', 'Gagal menghapus semua permission petugas! ' . $th->getMessage());
         }
     }
     public function updateProfil(Request $request, $id)
