@@ -76,12 +76,13 @@ class AlamatController extends Controller
             foreach ($jenis_bayar as $key => $jenis) {
                 if ($key >= $index) {
                     if ($jenis->jenis_biaya == 'f') {
-                        $totalHarga += $jenis->harga;
+                        $c = $jenis->harga;
                     }
                     else {
                         $x = $jenis->harga / 100 * $langganan->withmargin;
-                        $totalHarga += $x;
+                        $c = $x;
                     }
+                    $totalHarga += $c;
                 }
             }
             $a = $langganan->withmargin * $request->tagihan;
@@ -92,11 +93,11 @@ class AlamatController extends Controller
                 $biaya_mitra = DetailBagiHasil::with('pengaturan_bagi_hasil', 'mitra')->where('id_mitra', $detail_mitra->id_mitra)->where('status', 'a')->first();
                 if ($biaya_mitra !== null) {
                     if ($biaya_mitra->pengaturan_bagi_hasil->status_jenis == 'f') {
-                        $b += $biaya_mitra->pengaturan_bagi_hasil->besaran;
+                        $b += ($biaya_mitra->pengaturan_bagi_hasil->besaran * $request->tagihan);
                     }
                     else {
                         $x = $biaya_mitra->pengaturan_bagi_hasil->besaran / 100 * $langganan->withmargin;
-                        $b += $x;
+                        $b += ($x * $request->tagihan);
                     }
                 }
             }

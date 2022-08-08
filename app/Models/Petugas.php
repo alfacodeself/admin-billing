@@ -43,9 +43,6 @@ class Petugas extends Authenticatable
     public function isAdmin()
     {
         $detail_jabatan = $this->detail_jabatan->where('status', 'a')->first();
-        if ($detail_jabatan->jenis_jabatan->nama_jabatan == 'superadmin' || $detail_jabatan->jenis_jabatan->id_jenis_jabatan == "JJ001") {
-            return true;
-        }
-        return false;
+        return $detail_jabatan->jenis_jabatan->nama_jabatan == 'superadmin' && $detail_jabatan->jenis_jabatan->id_jenis_jabatan == "JJ001";
     }
 }

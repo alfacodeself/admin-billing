@@ -20,6 +20,7 @@ class DetailTransaction
         $totalHarga = 0;
         $items = [];
         $detail = [];
+        $bermitra = false;
         $pelanggan = [
             'first_name'    => $pelanggan->nama_pelanggan,
             'email'         => $pelanggan->email,
@@ -87,18 +88,22 @@ class DetailTransaction
                 array_push($items, [
                     'id'        => count($items) + 1,
                     'price'     => $hargaBiayaMitra,
-                    'quantity'  => 1,
+                    'quantity'  => $qty,
                     'name'      => 'Biaya Mitra'
                 ]);
                 array_push($detail, [
                     'id_jenis_pembayaran'   => null,
                     'harga'                 => $hargaBiayaMitra,
-                    'qty'                   => 1,
-                    'total_tanggungan'      => $hargaBiayaMitra,
+                    'qty'                   => $qty,
+                    'total_tanggungan'      => $hargaBiayaMitra * $qty,
                     'keterangan'            => 'Biaya Mitra'
                 ]);
                 // Push biaya admin ke total harga
                 $totalHarga += $hargaBiayaMitra;
+                $bermitra = [
+                    'dana_mitra' => $hargaBiayaMitra * $qty,
+                    'id_bagi_hasil' => $biaya_mitra->id_detail_bagi_hasil
+                ];
             }
         }
         // Harga produk yang sudah di margin + Tagihan yang akan dibayar
@@ -123,7 +128,8 @@ class DetailTransaction
             'user' => $pelanggan,
             'items' => $items,
             'total' => $totalHarga,
-            'detail' => $detail
+            'detail' => $detail,
+            'bermitra' => $bermitra,
         ];
     }
     public function getInvoice(Langganan $langganan)

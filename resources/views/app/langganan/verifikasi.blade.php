@@ -39,7 +39,6 @@
                                     <th>Pelanggan</th>
                                     <th>Produk</th>
                                     <th>Berlangganan</th>
-                                    <th width="20%">Alamat</th>
                                     <th>Status</th>
                                     <th>Histori</th>
                                     <th>Aksi</th>
@@ -56,9 +55,6 @@
                                         {{ $l->lama_berlangganan }}
                                     </td>
                                     <td>
-                                        {{ Str::limit($l->alamat_pemasangan, 20, '...') }}
-                                    </td>
-                                    <td>
                                         @if ($l->status == "pn")
                                             <span class="badge badge-warning">Pengajuan</span>
                                         @elseif($l->status == "dt" || $l->status == "n")
@@ -70,20 +66,20 @@
                                     <td>
                                         <button class="btn btn-info py-0 btn-sm" data-toggle="modal" data-target="#historiModal" data-histori="{{ $l->histori }}">Lihat Histori</button>
                                     </td>
-                                    <td width="10%">
-                                        <a href="{{ route('langganan.show', $l->id_langganan) }}" class="btn btn-link m-0 p-0">
-                                            <i class="ti-eye text-primary font-weight-bold"></i>
+                                    <td width="15%">
+                                        <a href="{{ route('langganan.show', $l->id_langganan) }}" class="btn btn-outline-info btn-sm">
+                                            <i class="ti-eye font-weight-bold"></i>
                                         </a>
                                         @if ($l->status != 'dt')
-                                            <button type="button" class="btn btn-link m-0 p-0" data-toggle="modal" data-target="#rejectModal" data-title="{{ $l->kode_langganan }}" data-route="{{ route('langganan.verifikasi.reject', $l->id_langganan) }}">
-                                                <i class="ti-close text-danger font-weight-bold"></i>
+                                            <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#rejectModal" data-title="{{ $l->kode_langganan }}" data-route="{{ route('langganan.verifikasi.reject', $l->id_langganan) }}">
+                                                <i class="ti-close font-weight-bold"></i>
                                             </button>
                                         @endif
                                         <form action="{{ route('langganan.verifikasi.verify', $l->id_langganan) }}" method="post" class="d-inline">
                                             @csrf
                                             @method('PUT')
-                                            <button type="submit" class="btn btn-link m-0 p-0">
-                                                <i class="ti-check-box text-success font-weight-bold"></i>
+                                            <button type="submit" class="btn btn-outline-success btn-sm">
+                                                <i class="ti-check-box font-weight-bold"></i>
                                             </button>
                                         </form>
                                     </td>
@@ -166,7 +162,7 @@
             const button = $(event.relatedTarget)
             let title = button.data('title')
             let route = button.data('route')
-            
+
             let modal = $(this)
             modal.find('.modal-title').text('Langganan - ' + title)
             modal.find('.modal-action').attr('action', route)

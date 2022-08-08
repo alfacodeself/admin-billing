@@ -67,6 +67,14 @@
                                     <span class="hidden-xs-down">Dokumen</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#dana" role="tab">
+                                    <span class="hidden-sm-up">
+                                        <i class="ti-agenda"></i>
+                                    </span>
+                                    <span class="hidden-xs-down">Dana Mitra</span>
+                                </a>
+                            </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="profile" role="tabpanel">
@@ -113,7 +121,13 @@
                                                 </div>
                                             </div>
                                             <div class="contact-information">
-                                                <h4>Bagi Hasil</h4>
+                                                <h4>
+                                                    Bagi Hasil
+                                                    <button class="btn btn-link p-0 my-0 mx-2" data-toggle="modal"
+                                                    data-target="#bagihasilModal">
+                                                        <i class="ti-pencil-alt text-primary font-weight-bold"></i>
+                                                    </button>
+                                                </h4>
                                                 <div class="phone-content">
                                                     <span class="contact-title">Bagi Hasil per Transaksi:</span>
                                                     <span class="phone-number">
@@ -134,10 +148,6 @@
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li role="presentation" class="active">
                                             <a aria-controls="1" role="tab" data-toggle="tab">Pelanggan</a>
-                                            {{-- <button class="btn btn-link p-0 m-0" data-toggle="modal"
-                                                data-target="#alamatModal">
-                                                <i class="ti-pencil-alt text-primary font-weight-bold"></i>
-                                            </button> --}}
                                         </li>
                                     </ul>
                                     <div class="tab-content">
@@ -147,7 +157,7 @@
                                                     <thead class="thead-default">
                                                         <tr>
                                                             <th>#</th>
-                                                            <th>Nama Pelanggan</th>
+                                                            <th>Pelanggan</th>
                                                             <th>No Handphone</th>
                                                             <th>Alamat</th>
                                                             <th>Status</th>
@@ -229,6 +239,79 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="tab-pane p-20" id="dana" role="tabpanel">
+                                <div class="custom-tab user-profile-tab">
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        <li role="presentation" class="active">
+                                            <a aria-controls="1" role="tab" data-toggle="tab">Dana Mitra</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div role="tabpanel" class="tab-pane active" id="1">
+                                            <div class="basic-information">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped table-inverse table-responsive">
+                                                        <thead class="thead-default">
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>Transaksi</th>
+                                                                <th>Langganan</th>
+                                                                <th>Pelanggan</th>
+                                                                <th>Bagi Hasil</th>
+                                                                <th>Jenis</th>
+                                                                <th>Dana</th>
+                                                                <th>Tanggal</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @forelse ($dana_mitra as $dm)
+                                                                <tr>
+                                                                    <td scope="row">{{ $loop->iteration }}</td>
+                                                                    <td>
+                                                                        @can('detail transaksi')
+                                                                            <a href="{{ route('transaksi.show', $dm->id_transaksi) }}" class="text-info">
+                                                                                {{ $dm->id_transaksi }}
+                                                                            </a>
+                                                                        @endcan
+                                                                        @cannot('detail transaksi')
+                                                                            {{ $dm->id_transaksi }}
+                                                                        @endcannot
+                                                                    </td>
+                                                                    <td>
+                                                                        @can('detail langganan')
+                                                                            <a href="{{ route('langganan.show', $dm->id_langganan) }}" class="text-info">
+                                                                                {{ $dm->kode_langganan }}
+                                                                            </a>
+                                                                        @endcan
+                                                                        @cannot('detail langganan')
+                                                                            {{ $dm->kode_langganan }}
+                                                                        @endcannot
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ $dm->nama_pelanggan }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ $dm->besaran }}
+                                                                    </td>
+                                                                    <td>{{ $dm->jenis_bagi }}</td>
+                                                                    <td>
+                                                                        {{ $dm->hasil_dana_mitra }}
+                                                                    </td>
+                                                                    <td>{{ $dm->tanggal_lunas }}</td>
+                                                                </tr>
+                                                            @empty
+                                                                <tr>
+                                                                    <td colspan="8" class="text-center">Tidak ada dana mitra!</td>
+                                                                </tr>
+                                                            @endforelse
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -270,6 +353,50 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Update Dokumen Pelanggan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="bagihasilModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ubah Pengaturan Bagi Hasil Mitra</h5>
+                </div>
+                <form action="{{ route('mitra.show.update-bagi-hasil', $mitra->id_mitra) }}" method="post" class="form-horizontal">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <div class="row">
+                                @forelse ($bagi_hasil as $bh)
+                                <div class="col-md-4">
+                                    <label>
+                                        <input type="radio" name="bagi_hasil" class="card-input-element" {{ old('bagi_hasil') == $bh->id_pengaturan_bagi_hasil ? 'checked' : '' }} value="{{ $bh->id_pengaturan_bagi_hasil }}"/>
+                                        <div class="card card-pricing text-center px-3">
+                                            <span class="h6 mx-auto px-4 py-2 rounded-bottom bg-primary text-white">{{ $bh->status_jenis == 'p' ? $bh->besaran . '%' : 'Rp.' . number_format($bh->besaran) }}
+                                            </span>
+                                            <div class="bg-transparent card-header border-0">
+                                                <h1 class="h4 font-weight-normal text-primary text-center mb-0"
+                                                    data-pricing-value="15">
+                                                    <span class="price">{{ $bh->keterangan }}</span><br>
+                                                    <span class="h6 text-muted ml-2"> Bagi hasil transaksi per bulan sebanyak {{ $bh->status_jenis == 'p' ? $bh->besaran . '%' : 'Rp.' . number_format($bh->besaran) }}.</span>
+                                                </h1>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                                @empty
+                                    Tidak pengaturan bagi hasil!
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update Bagi Hasil Mitra</button>
                     </div>
                 </form>
             </div>
@@ -419,6 +546,21 @@
         .profile-card-5 .btn-primary {
             background-color: #4E5E30;
             border-color: #4E5E30;
+        }
+        label {
+            width: 100%;
+        }
+
+        .card-input-element {
+            display: none;
+        }
+
+        .card-pricing:hover {
+            cursor: pointer;
+        }
+
+        .card-input-element:checked+.card-pricing {
+            box-shadow: 0 0 3px 3px #2ecc71;
         }
     </style>
 @endpush

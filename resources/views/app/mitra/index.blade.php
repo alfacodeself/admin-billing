@@ -30,8 +30,10 @@
                     </h4>
                     <br>
                     <div class="card-body">
-                        @can('lihat mitra')
-
+                        @can('tambah mitra')
+                        <a href="{{ route('mitra.create') }}" class="btn btn-outline-primary">
+                            <i class="ti-plus"></i> Tambah Mitra
+                        </a>
                         @endcan
                         <a href="{{ route('langganan.create') }}" class="btn btn-outline-info float-right">
                             <i class="ti-printer"></i> Cetak

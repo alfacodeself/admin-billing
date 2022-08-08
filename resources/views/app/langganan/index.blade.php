@@ -47,7 +47,6 @@
                                     <th>Pelanggan</th>
                                     <th>Produk</th>
                                     <th>Berlangganan</th>
-                                    <th width="15%">Alamat</th>
                                     <th>Status</th>
                                     <th>Histori</th>
                                     <th>Aksi</th>
@@ -64,9 +63,6 @@
                                         {{ $l->lama_berlangganan }}
                                     </td>
                                     <td>
-                                        {{ Str::limit($l->alamat_pemasangan, 20, '...') }}
-                                    </td>
-                                    <td>
                                         @if ($l->status == "pn")
                                             <span class="badge badge-warning">Pengajuan</span>
                                         @elseif($l->status == "dt" || $l->status == "n")
@@ -81,12 +77,12 @@
                                         <button class="btn btn-info py-0 btn-sm" data-toggle="modal" data-target="#historiModal" data-histori="{{ $l->histori }}">Lihat Histori</button>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-link m-0 p-0" data-toggle="modal" data-target="#emailModal">
+                                        {{-- <button type="button" class="btn btn-link m-0 p-0" data-toggle="modal" data-target="#emailModal">
                                             <i class="ti-email text-info font-weight-bold"></i>
-                                        </button>
+                                        </button> --}}
                                         @can('detail langganan')
-                                        <a href="{{ route('langganan.show', $l->id_langganan) }}" class="btn btn-link m-0 p-0">
-                                            <i class="ti-eye text-primary font-weight-bold"></i>
+                                        <a href="{{ route('langganan.show', $l->id_langganan) }}" class="btn btn-outline-info btn-sm">
+                                            <i class="ti-eye font-weight-bold"></i>
                                         </a>
                                         @endcan
                                     </td>

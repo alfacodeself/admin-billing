@@ -3,25 +3,27 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\{Desa, Produk, Langganan, Pelanggan, JenisLangganan, DetailLangganan};
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\{DB, Cache};
 use App\Http\Requests\LanggananRequest;
+use App\Models\{Desa, Produk, Langganan, Pelanggan, JenisLangganan, DetailLangganan};
 
 class LanggananController extends Controller
 {
     public function index()
     {
-        $langganan = DB::table('detail_langganan')->join('langganan', 'detail_langganan.id_langganan', '=', 'langganan.id_langganan')
-                    ->join('jenis_langganan', 'detail_langganan.id_jenis_langganan', '=', 'jenis_langganan.id_jenis_langganan')
-                    ->join('produk', 'langganan.id_produk', '=', 'produk.id_produk')
-                    ->join('kategori', 'produk.id_kategori', '=', 'kategori.id_kategori')
-                    ->join('pelanggan', 'langganan.id_pelanggan', '=', 'pelanggan.id_pelanggan')
-                    ->select('langganan.id_langganan', 'langganan.kode_langganan', 'langganan.alamat_pemasangan', 'langganan.status', 'langganan.histori', 'pelanggan.nama_pelanggan', 'produk.nama_produk', 'kategori.nama_kategori', 'jenis_langganan.lama_berlangganan')
-                    ->where('detail_langganan.status', 'a')
-                    ->where('langganan.status', '!=', 'pn')
-                    ->get();
+        $langganan = Cache::remember('langganan-index-petugas', 60*60*60, function () {
+            return DB::table('detail_langganan')->join('langganan', 'detail_langganan.id_langganan', '=', 'langganan.id_langganan')
+            ->join('jenis_langganan', 'detail_langganan.id_jenis_langganan', '=', 'jenis_langganan.id_jenis_langganan')
+            ->join('produk', 'langganan.id_produk', '=', 'produk.id_produk')
+            ->join('kategori', 'produk.id_kategori', '=', 'kategori.id_kategori')
+            ->join('pelanggan', 'langganan.id_pelanggan', '=', 'pelanggan.id_pelanggan')
+            ->select('langganan.id_langganan', 'langganan.kode_langganan', 'langganan.status', 'langganan.histori', 'pelanggan.nama_pelanggan', 'produk.nama_produk', 'kategori.nama_kategori', 'jenis_langganan.lama_berlangganan')
+            ->where('detail_langganan.status', 'a')
+            ->where('langganan.status', '!=', 'pn')
+            ->get();
+        });
         return view('app.langganan.index', compact('langganan'));
     }
     public function create()
@@ -134,7 +136,7 @@ class LanggananController extends Controller
                     ->join('kabupaten', 'kecamatan.id_kabupaten', '=', 'kabupaten.id_kabupaten')
                     ->join('provinsi', 'kabupaten.id_provinsi', '=', 'provinsi.id_provinsi')
                     ->join('pelanggan', 'langganan.id_pelanggan', '=', 'pelanggan.id_pelanggan')
-                    ->select('langganan.id_langganan', 'langganan.kode_langganan', 'produk.nama_produk', 'kategori.nama_kategori', 'langganan.status AS status_langganan', 'langganan.tanggal_verifikasi', 'langganan.tanggal_instalasi', 'langganan.histori', 'langganan.alamat_pemasangan', 'provinsi.nama_provinsi', 'kabupaten.nama_kabupaten', 'kecamatan.nama_kecamatan', 'desa.nama_desa', 'pelanggan.nama_pelanggan', 'pelanggan.nik', 'pelanggan.jenis_kelamin', 'pelanggan.status AS status_pelanggan', 'pelanggan.nomor_hp', 'pelanggan.email', 'pelanggan.id_pelanggan')
+                    ->select('langganan.id_langganan', 'langganan.kode_langganan', 'produk.nama_produk', 'kategori.nama_kategori', 'langganan.status AS status_langganan', 'langganan.tanggal_verifikasi', 'langganan.tanggal_instalasi', 'langganan.histori', 'langganan.alamat_pemasangan', 'provinsi.nama_provinsi', 'kabupaten.nama_kabupaten', 'kecamatan.nama_kecamatan', 'desa.nama_desa', 'langganan.rt', 'langganan.rw', 'langganan.latitude', 'langganan.longitude', 'pelanggan.nama_pelanggan', 'pelanggan.nik', 'pelanggan.jenis_kelamin', 'pelanggan.status AS status_pelanggan', 'pelanggan.nomor_hp', 'pelanggan.email', 'pelanggan.id_pelanggan')
                     ->where('langganan.id_langganan', $id)
                     ->first();
         $detailLangganan = DB::table('detail_langganan')->where('id_langganan', $langganan->id_langganan)->where('status', 'a')->first();
@@ -278,6 +280,57 @@ class LanggananController extends Controller
             return redirect()->route('langganan.schedule')->with('success', 'Berhasil mengajukan tanggal instalasi');
         } catch (\Throwable $th) {
             return redirect()->route('langganan.schedule')->with('danger', 'Gagal mengajukan tanggal instalasi! ' . $th->getMessage());
+        }
+    }
+    public function editJenisLangganan($kode)
+    {
+        try {
+            $langganan = Langganan::select('kode_langganan')->where('kode_langganan', $kode)->firstOrFail();
+            $jenis_langganan = JenisLangganan::where('status', 'a')->get();
+            return view('app.langganan.uplangganan', compact('langganan', 'jenis_langganan'));
+        } catch (\Throwable $th) {
+            return back()->withErrors(['error' => $th->getMessage()]);
+        }
+    }
+    public function updateJenisLangganan(Request $request, $kode)
+    {
+        $request->validate([
+            'jenis_langganan' => 'required'
+        ]);
+        try {
+            $langganan = Langganan::where('kode_langganan', $kode)->firstOrFail();
+            $jenis = JenisLangganan::findOrFail($request->jenis_langganan);
+            $detail = DetailLangganan::where('id_langganan', $langganan->id_langganan)->where('status', 'a')->firstOrFail();
+            if ($detail->status_tagihan == 'bl') {
+                return back()->withErrors(['Gagal', 'Status langganan anda belum lunas']);
+            }elseif ($detail->sisa_tagihan != 0) {
+                return back()->withErrors(['Gagal', 'Langganan sebelumnya masih memiliki ' . $detail->sisa_tagihan . ' tagihan!']);
+            }elseif (Carbon::parse($detail->tanggal_kadaluarsa) > Carbon::now('+0700')) {
+                return back()->withErrors(['Gagal', 'Langganan sebelumnya belum kadaluarsa!']);
+            }
+            $detail->update([
+                'status' => 'n'
+            ]);
+            $check2 = DB::table('detail_langganan')->select(DB::raw('MAX(RIGHT(id_detail_langganan, 5)) AS kode'));
+            if ($check2->count() > 0) {
+                foreach ($check2->get() as $c) {
+                    $temp2 = ((int) $c->kode) + 1;
+                    $code2 = sprintf("%'.05d", $temp2);
+                }
+            } else {
+                $code2 = "00001";
+            }
+            DetailLangganan::create([
+                'id_detail_langganan' => 'DL' . $code2,
+                'id_langganan' => $langganan->id_langganan,
+                'id_jenis_langganan' => $jenis->id_jenis_langganan,
+                'sisa_tagihan' => $jenis->banyak_tagihan,
+                'status' => 'a',
+                'status_pembayaran' => 'bl'
+            ]);
+            return redirect()->route('langganan.editjenislangganan', $langganan->kode_langganan)->with('success', 'Berhasil mengubah langganan!');
+        } catch (\Throwable $th) {
+            return back()->withErrors(['error', $th->getMessage()]);
         }
     }
 }

@@ -13,10 +13,14 @@ class PembayaranController extends Controller
 {
     public function index()
     {
-        $metode_pembayaran = MetodePembayaran::get();
-        $bagi_hasil = PengaturanBagiHasil::get();
-        $general = DB::table('pengaturan_pembayaran')->first();
-        $jenis_bayar = JenisPembayaran::get();
+        $metode_pembayaran = MetodePembayaran::select('id_metode_pembayaran', 'logo', 'metode_pembayaran', 'via', 'status')
+                            ->get();
+        $bagi_hasil = PengaturanBagiHasil::select('besaran', 'status_jenis')->where('status', 'a')->first();
+        $general = DB::table('pengaturan_pembayaran')
+                    ->select('server_key', 'client_key', 'charge_url', 'durasi_waktu', 'satuan_durasi', 'harga_margin')
+                    ->first();
+        $jenis_bayar = JenisPembayaran::select('id_jenis_pembayaran', 'jenis_pembayaran', 'harga', 'jenis_biaya', 'status')
+                        ->get();
         return view('app.pengaturan.pembayaran', compact('metode_pembayaran', 'bagi_hasil', 'general', 'jenis_bayar'));
     }
 }

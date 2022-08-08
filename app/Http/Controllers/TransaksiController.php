@@ -3,18 +3,17 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\DanaMitra;
 use App\Models\Langganan;
+// use Illuminate\Support\Str;
 use App\Models\Transaksi;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\DetailLangganan;
-use App\Models\MetodePembayaran;
 use Illuminate\Support\Facades\DB;
 use App\Http\Midtrans\BankTransfer;
 use App\Http\Price\DetailTransaction;
-use App\Models\DetailBagiHasil;
-use App\Models\DetailTransaksi;
+// use App\Models\DetailBagiHasil;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\{DetailLangganan, MetodePembayaran, DetailTransaksi};
 
 class TransaksiController extends Controller
 {
@@ -92,6 +91,7 @@ class TransaksiController extends Controller
                 'tanggal_transaksi' => Carbon::parse($res['transaction_time']),
                 'tanggal_lunas' => $metode->via == 'admin' ? null : Carbon::parse($res['transaction_time'])
             ]);
+            // Push detail transaksi
             foreach ($resDetailInvoice['detail'] as $jenis) {
                 $check = DB::table('detail_transaksi')->select(DB::raw('MAX(RIGHT(id_detail_transaksi, 6)) AS kode'));
                 if ($check->count() > 0) {
@@ -111,6 +111,24 @@ class TransaksiController extends Controller
                     'qty' => $jenis['qty'],
                     'total_tanggungan' => $jenis['total_tanggungan'],
                     'keterangan' => $jenis['keterangan']
+                ]);
+            }
+
+            if ($resDetailInvoice['bermitra'] != false) {
+                $check3 = DB::table('dana_mitra')->select(DB::raw('MAX(RIGHT(id_dana_mitra, 6)) AS kode'));
+                if ($check3->count() > 0) {
+                    foreach ($check3->get() as $c) {
+                        $temp = ((int) $c->kode) + 1;
+                        $code = sprintf("%'.06d", $temp);
+                    }
+                } else {
+                    $code = "000001";
+                }
+                DanaMitra::create([
+                    'id_dana_mitra' => 'DMIT' . $code,
+                    'id_transaksi' => $transaksi->id_transaksi,
+                    'id_detail_bagi_hasil' => $resDetailInvoice['bermitra']['id_bagi_hasil'],
+                    'hasil_dana_mitra' => $resDetailInvoice['bermitra']['dana_mitra']
                 ]);
             }
             return redirect()->route('transaksi.index')->with('success', 'Berhasil membuat transaksi!');

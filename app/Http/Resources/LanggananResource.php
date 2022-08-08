@@ -20,7 +20,6 @@ class LanggananResource extends JsonResource
             'produk' => $this->produk->nama_produk,
             'kategori' => $this->produk->kategori->nama_kategori,
             'harga' => $this->produk->withmargin,
-            'alamat_pemasangan' => $this->alamat_pemasangan,
             'status' => $this->status,
             'tanggal_instalasi' => $this->tanggal_instalasi ?? 'Belum Instalasi',
             'tanggal_verifikasi' => $this->tanggal_verifikasi ?? 'Belum Disetujui'

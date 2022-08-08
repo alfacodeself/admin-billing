@@ -43,7 +43,7 @@ class ResetPasswordController extends Controller
                     'id_pemohon' => $petugas->id_petugas,
                     'status_pemohon' => 'pt',
                     'status_token' => 'using',
-                    'waktu_expired' => Carbon::now()->addHour()
+                    'waktu_expired' => Carbon::now('+0700')->addHour()
                 ]);
                 $token = DB::table('reset_password')
                         ->where('id_reset_password', $id)
@@ -60,9 +60,10 @@ class ResetPasswordController extends Controller
     public function reset_password($token)
     {
         $reset = DB::table('reset_password')->where('token', $token)->first();
+        // dd(Carbon::parse($reset->waktu_expired));
         if ($reset == null) {
             return redirect()->route('reset-password.email')->with('danger', 'Token anda salah! Harap ajukan reset password kembali!');
-        }elseif ($reset->status_token == 'expired' || Carbon::now() > Carbon::parse($reset->waktu_expired)) {
+        }elseif ($reset->status_token == 'expired' || Carbon::now('+0700') > Carbon::parse($reset->waktu_expired)) {
             return redirect()->route('reset-password.email')->with('danger', 'Token anda expired! Harap ajukan reset password kembali!');
         }
         return view('app.auth.reset-password', compact('reset'));

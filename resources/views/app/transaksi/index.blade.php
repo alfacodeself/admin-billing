@@ -42,7 +42,7 @@
                                     <th>#</th>
                                     <th>No. Transaksi</th>
                                     <th>Petugas</th>
-                                    <th>Metode Pembayaran</th>
+                                    <th>Metode</th>
                                     <th>Via</th>
                                     <th>Nomor VA</th>
                                     <th>Total Bayar</th>
@@ -58,7 +58,9 @@
                                     <td>{{ $t->id_transaksi }}</td>
                                     <td> {{ $t->petugas->nama_petugas ?? "-" }} </td>
                                     <td>{{ $t->metode_pembayaran->metode_pembayaran ?? '-' }}</td>
-                                    <td>{{ $t->metode_pembayaran->via ?? '-' }}</td>
+                                    <td>
+                                        <img src="{{ $t->metode_pembayaran->logo }}" alt="logo" width="50">
+                                    </td>
                                     <td>{{ $t->nomor_va ?? '-' }}</td>
                                     <td>{{ 'Rp.' . number_format($t->total_bayar) }}</td>
                                     <td>

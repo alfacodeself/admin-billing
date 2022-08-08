@@ -44,14 +44,6 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#bagiHasil" role="tab">
-                                    <span class="hidden-sm-up">
-                                        <i class="ti-bookmark-alt"></i>
-                                    </span>
-                                    <span class="hidden-xs-down">Bagi Hasil</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#jenisbayar" role="tab">
                                     <span class="hidden-sm-up">
                                         <i class="ti-bookmark-alt"></i>
@@ -105,6 +97,22 @@
                                                 <div class="phone-content">
                                                     <span class="contact-title">Margin Harga Produk</span>
                                                     <span class="phone-number">{{ 'Rp.' . number_format($general->harga_margin) }}</span>
+                                                </div>
+                                                <div class="phone-content">
+                                                    <span class="contact-title">
+                                                        Bagi Hasil Mitra
+                                                    </span>
+                                                    <span class="phone-number">
+                                                        @if ($bagi_hasil->status_jenis == 'f')
+                                                            {{ 'Rp.' . number_format($bagi_hasil->besaran) }}
+                                                        @else 
+                                                            {{ $bagi_hasil->besaran . '%' }}
+                                                        @endif
+                                                        <button class="btn btn-link p-0 my-0 mx-2" data-toggle="modal"
+                                                            data-target="#tambahModalBagi">
+                                                            <i class="ti-pencil-alt text-primary font-weight-bold"></i>
+                                                        </button>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -181,84 +189,6 @@
                                                         @empty
                                                             <tr>
                                                                 <td colspan="6" class="text-center">Tidak ada data metode pembayaran!</td>
-                                                            </tr>
-                                                        @endforelse
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane p-20" id="bagiHasil" role="tabpanel">
-                                <div class="custom-tab user-profile-tab">
-                                    <ul class="nav nav-tabs" role="tablist">
-                                        <li role="presentation" class="active">
-                                            <a aria-controls="1" role="tab" data-toggle="tab">Bagi Hasil</a>
-                                            <button class="btn btn-link p-0 m-0" data-toggle="modal"
-                                                data-target="#tambahModalBagi">
-                                                <i class="ti-plus text-primary font-weight-bold"></i>
-                                            </button>
-                                        </li>
-                                    </ul>
-                                    <div class="tab-content">
-                                        <div role="tabpanel" class="tab-pane active" id="1">
-                                            <div class="table-responsive">
-                                                <table class="table table-hover table-stripped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>#</th>
-                                                            <th>Keterangan</th>
-                                                            <th>Besaran</th>
-                                                            <th>Jenis</th>
-                                                            <th>Status</th>
-                                                            <th>Aksi</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @forelse ($bagi_hasil as $b)
-                                                            <tr>
-                                                                <th scope="row">{{ $loop->iteration }}</th>
-                                                                <td>{{ $b->keterangan }}</td>
-                                                                <td>{{ $b->besaran }}</td>
-                                                                <td>{{ $b->status_jenis == 'p'? 'Presentase' : 'Flat' }}</td>
-                                                                <td>
-                                                                    <div class="checkbox switcher">
-                                                                        <label for="test">
-                                                                            <input
-                                                                                type="checkbox"
-                                                                                class="change"
-                                                                                data-set="{{ $b->id_pengaturan_bagi_hasil }}"
-                                                                                data-type="bagi_hasil"
-                                                                                {{ $b->status == 'a' ? 'checked' : '' }}>
-                                                                            <span><small></small></span>
-                                                                        </label>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <button
-                                                                        type="button"
-                                                                        class="btn btn-link m-0 p-0"
-                                                                        data-toggle="modal"
-                                                                        data-target="#updateModalBagi"
-                                                                        data-keterangan="{{ $b->keterangan }}"
-                                                                        data-besaran="{{ $b->besaran }}"
-                                                                        data-jenis="{{ $b->status_jenis }}"
-                                                                        data-route="{{ route('bagi-hasil.update', $b->id_pengaturan_bagi_hasil) }}">
-                                                                        <i class="ti-pencil-alt text-warning font-weight-bold"></i>
-                                                                    </button>
-                                                                    <form action="{{ route('bagi-hasil.delete', $b->id_pengaturan_bagi_hasil) }}" method="post" class="d-inline">
-                                                                        @csrf
-                                                                        @method('DELETE')
-                                                                        <button type="submit" class="btn btn-link m-0 p-0">
-                                                                            <i class="ti-trash text-danger font-weight-bold"></i>
-                                                                        </button>
-                                                                    </form>
-                                                                </td>
-                                                            </tr>
-                                                        @empty
-                                                            <tr>
-                                                                <td colspan="6" class="text-center">Tidak ada data pengaturan bagi hasil!</td>
                                                             </tr>
                                                         @endforelse
                                                     </tbody>
@@ -473,13 +403,6 @@
                     @method('POST')
                     <div class="modal-body px-4">
                         <div class="form-group">
-                            <label for="keterangan">Keterangan</label>
-                            <input type="text" class="form-control" id="keterangan" name="keterangan" placeholder="">
-                            @error('keterangan')
-                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
-                            @enderror
-                        </div>
-                        <div class="form-group">
                             <label for="besaran">Besaran</label>
                             <input type="number" class="form-control" id="besaran" name="besaran" placeholder="">
                             @error('besaran')
@@ -489,50 +412,6 @@
                         <div class="form-group">
                             <label for="jenis">Jenis Bagi Hasil</label>
                             <select name="jenis" id="jenis" class="form-control">
-                                <option value="p">Persentase</option>
-                                <option value="f">Flat</option>
-                            </select>
-                            @error('jenis')
-                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Buat Pengaturan Bagi Hasil</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="updateModalBagi" tabindex="-1" role="dialog" aria-labelledby="tambahCategory"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Ubah Pengaturan Bagi Hasil Mitra</h5>
-                </div>
-                <form action="" method="post" class="modal-route-metode" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body px-4">
-                        <div class="form-group">
-                            <label for="keterangan">Keterangan</label>
-                            <input type="text" class="form-control modal-keterangan-metode" id="keterangan" name="keterangan" placeholder="">
-                            @error('keterangan')
-                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="besaran">Besaran</label>
-                            <input type="number" class="form-control modal-besaran-metode" id="besaran" name="besaran" placeholder="">
-                            @error('besaran')
-                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="jenis">Jenis Bagi Hasil</label>
-                            <select name="jenis" id="jenis" class="form-control modal-jenis-metode">
                                 <option value="p">Persentase</option>
                                 <option value="f">Flat</option>
                             </select>
@@ -692,26 +571,11 @@
             let jenisBiaya = button.data('jenisbiaya');
             let route = button.data('route');
 
-            console.log(jenisBayar, jenisBiaya);
             let modal = $(this)
             modal.find('.modal-route').attr('action', route)
             modal.find('.modal-jenisBayar').val(jenisBayar)
             modal.find('.modal-harga').val(harga);
             modal.find('.modal-jenisBiaya').val(jenisBiaya);
-        });
-        $('#updateModalBagi').on('show.bs.modal', function(event){
-            const button = $(event.relatedTarget)
-
-            let keterangan = button.data('keterangan');
-            let besaran = button.data('besaran');
-            let jenis = button.data('jenis');
-            let route = button.data('route');
-
-            let modal = $(this)
-            modal.find('.modal-route-metode').attr('action', route)
-            modal.find('.modal-jenis-metode').val(jenis)
-            modal.find('.modal-keterangan-metode').val(keterangan);
-            modal.find('.modal-besaran-metode').val(besaran);
         });
         $('#editModalMetode').on('show.bs.modal', function(event){
             const button = $(event.relatedTarget)

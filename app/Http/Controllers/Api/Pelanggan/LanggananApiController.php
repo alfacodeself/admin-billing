@@ -2,20 +2,24 @@
 
 namespace App\Http\Controllers\Api\Pelanggan;
 
-use App\Models\{Desa, Produk, Langganan, JenisLangganan, DetailLangganan};
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Resources\LanggananResource;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\{Desa, Produk, Langganan, JenisLangganan, DetailLangganan};
 
 class LanggananApiController extends Controller
 {
     public function index()
     {
         try {
-            $langganan = auth()->guard('pelanggan')->user()->langganan;
+            $langganan = Cache::remember('langganan-index', 60*60*24, function () {
+                return auth()->guard('pelanggan')->user()->langganan;
+            });
             return response()->json([
                 'status' => true,
                 'message' => 'Berhasil mengambil langganan.',
@@ -154,25 +158,31 @@ class LanggananApiController extends Controller
     {
         try {
             $margin = DB::table('pengaturan_pembayaran')->select('harga_margin')->first();
-            $langganan = DB::table('langganan')
-                        ->join('produk', 'langganan.id_produk', '=', 'produk.id_produk')
-                        ->join('kategori', 'produk.id_kategori', '=', 'kategori.id_kategori')
-                        ->join('desa', 'langganan.id_desa', '=', 'desa.id_desa')
-                        ->join('kecamatan', 'desa.id_kecamatan', '=', 'kecamatan.id_kecamatan')
-                        ->join('kabupaten', 'kecamatan.id_kabupaten', '=', 'kabupaten.id_kabupaten')
-                        ->join('provinsi', 'kabupaten.id_provinsi', '=', 'provinsi.id_provinsi')
-                        ->join('pelanggan', 'langganan.id_pelanggan', '=', 'pelanggan.id_pelanggan')
-                        ->select('langganan.id_langganan', 'langganan.kode_langganan', 'produk.nama_produk', 'kategori.nama_kategori', 'langganan.status AS status_langganan', 'langganan.tanggal_verifikasi', 'langganan.tanggal_instalasi', 'langganan.histori', 'langganan.alamat_pemasangan', 'provinsi.nama_provinsi', 'kabupaten.nama_kabupaten', 'kecamatan.nama_kecamatan', 'desa.nama_desa', 'langganan.rt', 'langganan.rw', 'desa.kode_pos', 'langganan.latitude', 'langganan.longitude')
-                        ->selectRaw('produk.harga + ? AS withmargin', [$margin->harga_margin ?? 0])
-                        ->where('langganan.id_langganan', $id)
-                        ->where('langganan.id_pelanggan', auth()->id())
-                        ->first();
-            $detailLangganan = DB::table('detail_langganan')->where('id_langganan', $langganan->id_langganan)->where('status', 'a')->first();
-            $semuaDetailLangganan = DB::table('detail_langganan')
-                                    ->join('jenis_langganan', 'detail_langganan.id_jenis_langganan', '=', 'jenis_langganan.id_jenis_langganan')
-                                    ->select('jenis_langganan.lama_berlangganan AS jenis_berlangganan', 'detail_langganan.*')
-                                    ->where('detail_langganan.id_langganan', $langganan->id_langganan)
-                                    ->get();
+            $langganan = Cache::remember('langganan-show', 60*60*60, function() use ($margin, $id){
+                return DB::table('langganan')
+                ->join('produk', 'langganan.id_produk', '=', 'produk.id_produk')
+                ->join('kategori', 'produk.id_kategori', '=', 'kategori.id_kategori')
+                ->join('desa', 'langganan.id_desa', '=', 'desa.id_desa')
+                ->join('kecamatan', 'desa.id_kecamatan', '=', 'kecamatan.id_kecamatan')
+                ->join('kabupaten', 'kecamatan.id_kabupaten', '=', 'kabupaten.id_kabupaten')
+                ->join('provinsi', 'kabupaten.id_provinsi', '=', 'provinsi.id_provinsi')
+                ->join('pelanggan', 'langganan.id_pelanggan', '=', 'pelanggan.id_pelanggan')
+                ->select('langganan.id_langganan', 'langganan.kode_langganan', 'produk.nama_produk', 'kategori.nama_kategori', 'langganan.status AS status_langganan', 'langganan.tanggal_verifikasi', 'langganan.tanggal_instalasi', 'langganan.histori', 'langganan.alamat_pemasangan', 'provinsi.nama_provinsi', 'kabupaten.nama_kabupaten', 'kecamatan.nama_kecamatan', 'desa.nama_desa', 'langganan.rt', 'langganan.rw', 'desa.kode_pos', 'langganan.latitude', 'langganan.longitude', 'langganan.pesan')
+                ->selectRaw('produk.harga + ? AS withmargin', [$margin->harga_margin ?? 0])
+                ->where('langganan.id_langganan', $id)
+                ->where('langganan.id_pelanggan', auth()->id())
+                ->first();
+            });
+            $detailLangganan = Cache::remember('detail-langganan-show', 60*60*60, function() use ($langganan){
+                return DB::table('detail_langganan')->where('id_langganan', $langganan->id_langganan)->where('status', 'a')->first();
+            });
+            $semuaDetailLangganan = Cache::remember('semua-detail-langganan', 60*60*60, function () use ($langganan){
+                return DB::table('detail_langganan')
+                ->join('jenis_langganan', 'detail_langganan.id_jenis_langganan', '=', 'jenis_langganan.id_jenis_langganan')
+                ->select('jenis_langganan.lama_berlangganan AS jenis_berlangganan', 'detail_langganan.*')
+                ->where('detail_langganan.id_langganan', $langganan->id_langganan)
+                ->get();
+            });
             return response()->json([
                 'status' => true,
                 'message' => 'Berhasil mengambil langganan.',
@@ -206,6 +216,13 @@ class LanggananApiController extends Controller
         try {
             // Cek langganan
             $langganan = Langganan::where('kode_langganan', $kode)->firstOrFail();
+            if ($langganan->pelanggan->id_pelanggan != auth('pelanggan')->id()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Gagal mengubah langganan!',
+                    'errors' => ['Anda tidak dapat mengakses halaman!']
+                ], Response::HTTP_UNAUTHORIZED);
+            }
             // Cek detail langganan
             $detail_langganan = DetailLangganan::where('id_langganan', $langganan->id_langganan)->where('status', 'a')->firstOrFail();
             // Kalau status langganan bukan pengajuan atau ditolak
@@ -291,14 +308,16 @@ class LanggananApiController extends Controller
     }
     public function transaksiLangganan($kode)
     {
-        try {
+        try {   
             $langganan = Langganan::where('kode_langganan', $kode)->where('id_pelanggan', auth()->id())->firstOrFail();
-            $transaksi = $langganan->transaksi->load('detail_transaksi', 'metode_pembayaran', 'petugas', 'langganan')->map(function($trx) {
-                $trx->detail_transaksi->map(function($detTrx) use ($trx){
-                    return $detTrx->nama_pembayaran = $detTrx->id_jenis_pembayaran == null ? $trx->langganan->produk->nama_produk : $detTrx->jenis_pembayaran->jenis_pembayaran;
+            $transaksi = Cache::remember('langganan-transaksi-langganan', 60*60*60, function () use ($langganan) {
+                return $langganan->transaksi->load('detail_transaksi', 'metode_pembayaran', 'petugas', 'langganan')->map(function($trx) {
+                    $trx->detail_transaksi->map(function($detTrx) use ($trx){
+                        return $detTrx->nama_pembayaran = $detTrx->id_jenis_pembayaran == null ? $trx->langganan->produk->nama_produk : $detTrx->jenis_pembayaran->jenis_pembayaran;
+                    });
+                    $trx->metode_pembayaran->logo = url($trx->metode_pembayaran->logo);
+                    return $trx;
                 });
-                $trx->metode_pembayaran->logo = url($trx->metode_pembayaran->logo);
-                return $trx;
             });
             return response()->json([
                 'status' => true,
@@ -309,6 +328,129 @@ class LanggananApiController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Gagal memuat transaksi langganan!',
+                'errors' => [$th->getMessage()]
+            ], 500);
+        }
+    }
+    public function pengajuan($kode)
+    {
+        try {
+            $langganan = Langganan::where('kode_langganan', $kode)->where('id_pelanggan', auth()->id())->firstOrFail();
+            if ($langganan->status != 'dt') {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Gagal mengubah langganan.',
+                    'errors' => ['Status langganan tidak sedang ditolak!']
+                ], Response::HTTP_BAD_REQUEST);
+            }
+            $langganan->update([
+                'status' => 'pn'
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => 'Berhasil melakukan pengajuan!'
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Gagal memuat transaksi langganan!',
+                'errors' => [$th->getMessage()]
+            ], 500);
+        }
+    }
+    public function set_tanggal_instalasi(Request $request, $kode)
+    {
+        $request->validate([
+            'tanggal_pengajuan' => 'required|date'
+        ], [
+            'tanggal_pengajuan.required' => 'Tanggal pengajuan tidak boleh kosong!',
+            'tanggal_pengajuan.date' => 'Format tanggal salah!'
+        ]);
+        try {
+            $langganan = Langganan::where('kode_langganan', $kode)->where('id_pelanggan', auth()->id())->firstOrFail();
+            if ($langganan->pelanggan->id_pelanggan != auth('pelanggan')->id()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Gagal mengajukan tanggal instalasi!',
+                    'errors' => ['Anda tidak dapat mengakses halaman!']
+                ], Response::HTTP_UNAUTHORIZED);
+            }
+            if ($langganan->tanggal_instalasi !== null && $langganan->tanggal_instalasi > Carbon::now('+0700')->format('Y-m-d')) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Gagal mengajukan tanggal instalasi langganan!',
+                    'errors' => ['Anda sudah mengajukan tanggal instalasi yang valid!']
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            if ($langganan->status != 'pni' && $langganan->status != 'pmi') {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Gagal mengajukan tanggal instalasi langganan!',
+                    'errors' => ['Status langganan tidak dalam pengajuan dan pemasangan instalasi!']
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            if (Carbon::parse($request->tanggal_pengajuan) < Carbon::now('+0700')) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Gagal mengajukan tanggal instalasi langganan!',
+                    'errors' => ['Tanggal pengajuan harus lebih besar dari tanggal sekarang!']
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            $langganan->update([
+                'status' => 'pmi',
+                'tanggal_instalasi' => Carbon::parse($request->tanggal_pengajuan),
+                'pesan' => 'Berhasil mengajukan tanggal instalasi!'
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => 'Berhasil mengajukan tanggal instalasi langganan!'
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Gagal mengajukan tanggal instalasi langganan!',
+                'errors' => [$th->getMessage()]
+            ], 500);
+        }
+    }
+    public function approve($kode)
+    {
+        try {
+            $langganan = Langganan::where('kode_langganan', $kode)->where('id_pelanggan', auth('pelanggan')->id())->firstOrFail();
+            if ($langganan->pelanggan->id_pelanggan != auth('pelanggan')->id()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Gagal meyetujui penyelesaian instalasi!',
+                    'errors' => ['Anda tidak dapat mengakses halaman!']
+                ], Response::HTTP_UNAUTHORIZED);
+            }
+            $detail_langganan = DetailLangganan::where('id_langganan', $langganan->id_langganan)->where('status', 'a')->firstOrFail();
+            $bulan = $detail_langganan->jenis_langganan->banyak_tagihan;
+            $kadaluarsa = $detail_langganan->jenis_langganan->banyak_tagihan - $detail_langganan->sisa_tagihan;
+            if ($langganan->status != 'pmi') {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Gagal mengajukan sudah instalasi langganan!',
+                    'errors' => ['Status langganan tidak dalam pemasangan instalasi!']
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            $langganan->update([
+                'status' => 'a',
+                'pesan' => 'Langganan anda telah aktif!'
+            ]);
+            $detail_langganan->update([
+                'tanggal_mulai' => Carbon::now('+0700')->format('Y-m-d'),
+                'tanggal_kadaluarsa' => Carbon::now('+0700')->addMonths($kadaluarsa)->format('Y-m-d'),
+                'tanggal_selesai' => Carbon::now('+0700')->addMonths($bulan)->format('Y-m-d')
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => 'Berhasil mengajukan sudah instalasi langganan! Langganan telah aktif!'
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Gagal mengajukan tanggal instalasi langganan!',
                 'errors' => [$th->getMessage()]
             ], 500);
         }

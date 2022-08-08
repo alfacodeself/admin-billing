@@ -70,31 +70,33 @@
                                                         @forelse ($petugas as $p)
                                                             <tr>
                                                                 <th scope="row">{{ $loop->iteration }}</th>
-                                                                <td>{{ $p->nama_petugas }}</td>
+                                                                <td>{{ $p['nama_petugas'] }}</td>
                                                                 <td>
                                                                     <span class="badge badge-success">
-                                                                        {{ $p->jabatan->jenis_jabatan->nama_jabatan }}
+                                                                        {{ $p['jabatan'] }}
                                                                     </span>
                                                                 </td>
                                                                 <td width="50%">
-                                                                    @forelse ($p->permission as $dp)
-                                                                        <span class="badge badge-info">
-                                                                            {{ $dp->permission->nama_permission }}
+                                                                    @forelse ($p['permission'] as $dp)
+                                                                        <span class="badge badge-info text-small">
+                                                                            {{ $dp }}
                                                                         </span>
                                                                     @empty
                                                                         Tidak ada permission petugas!
                                                                     @endforelse
                                                                 </td>
-                                                                <td width="6%">
-                                                                    <a href="{{ route('pengaturan.rolepermission.edit', $p->id_petugas) }}" class="btn btn-link p-0 m-0">
-                                                                        <i
-                                                                            class="ti-pencil-alt text-warning font-weight-bold"></i>
+                                                                <td width="15%">
+                                                                    <a href="{{ route('pengaturan.rolepermission.edit', $p['id_petugas']) }}" class="btn btn-outline-warning btn-sm">
+                                                                        <i class="ti-pencil-alt font-weight-bold"></i>
                                                                     </a>
-                                                                    <form action="{{ route('pengaturan.rolepermission.offPermission', $p->id_petugas) }}" method="post" class="d-inline">
+                                                                    <a href="{{ route('pengaturan.rolepermission.show', $p['id_petugas']) }}" class="btn btn-outline-info btn-sm">
+                                                                        <i class="ti-eye font-weight-bold"></i>
+                                                                    </a>
+                                                                    <form action="{{ route('pengaturan.rolepermission.offPermission', $p['id_petugas']) }}" method="post" class="d-inline">
                                                                         @csrf
                                                                         @method('PUT')
-                                                                        <button type="submit" class="btn btn-link p-0 m-0">
-                                                                            <i class="ti-power-off text-danger font-weight-bold"></i>
+                                                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                                            <i class="ti-power-off font-weight-bold"></i>
                                                                         </button>
                                                                     </form>
                                                                 </td>
@@ -119,7 +121,7 @@
                                             <a aria-controls="1" role="tab" data-toggle="tab">Histori</a>
                                         </li>
                                     </ul>
-                                    <div class="tab-content">
+                                    {{-- <div class="tab-content">
                                         <div role="tabpanel" class="tab-pane active" id="1">
                                             <div class="table-responsive">
                                                 @forelse ($petugas as $p)
@@ -169,7 +171,7 @@
                                                 @endforelse
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -180,118 +182,3 @@
     </section>
     {{-- Modals --}}
 @endsection
-@push('css')
-    <style>
-        div.checkbox.switcher,
-        div.radio.switcher {
-            label {
-                padding: 0;
-
-                * {
-                    vertical-align: middle;
-                }
-
-                input {
-                    display: none;
-
-                    &+span {
-                        position: relative;
-                        display: inline-block;
-                        margin-right: 10px;
-                        width: 56px;
-                        height: 28px;
-                        background: #f2f2f2;
-                        border: 1px solid #eee;
-                        border-radius: 50px;
-                        transition: all 0.3s ease-in-out;
-
-                        small {
-                            position: absolute;
-                            display: block;
-                            width: 50%;
-                            height: 100%;
-                            background: #fff;
-                            border-radius: 50%;
-                            transition: all 0.3s ease-in-out;
-                            left: 0;
-                        }
-                    }
-
-                    &:checked+span {
-                        background: #269bff;
-                        border-color: #269bff;
-
-                        small {
-                            left: 50%;
-                        }
-                    }
-                }
-            }
-        }
-    </style>
-@endpush
-@push('js')
-    <script>
-        $('#updateModalJenis').on('show.bs.modal', function(event) {
-            const button = $(event.relatedTarget)
-
-            let jenisBayar = button.data('jenisbayar');
-            let harga = button.data('harga');
-            let jenisBiaya = button.data('jenisbiaya');
-            let route = button.data('route');
-
-            console.log(jenisBayar, jenisBiaya);
-            let modal = $(this)
-            modal.find('.modal-route').attr('action', route)
-            modal.find('.modal-jenisBayar').val(jenisBayar)
-            modal.find('.modal-harga').val(harga);
-            modal.find('.modal-jenisBiaya').val(jenisBiaya);
-        });
-        $('#updateModalBagi').on('show.bs.modal', function(event) {
-            const button = $(event.relatedTarget)
-
-            let keterangan = button.data('keterangan');
-            let besaran = button.data('besaran');
-            let jenis = button.data('jenis');
-            let route = button.data('route');
-
-            let modal = $(this)
-            modal.find('.modal-route-metode').attr('action', route)
-            modal.find('.modal-jenis-metode').val(jenis)
-            modal.find('.modal-keterangan-metode').val(keterangan);
-            modal.find('.modal-besaran-metode').val(besaran);
-        });
-        $('#editModalMetode').on('show.bs.modal', function(event) {
-            const button = $(event.relatedTarget)
-
-            let logo = button.data('logo');
-            let jenis = button.data('jenis');
-            let via = button.data('via');
-            let route = button.data('route');
-
-            let modal = $(this)
-            modal.find('.modal-logo-metode').attr('href', logo)
-            modal.find('.modal-route-metode').attr('action', route)
-            modal.find('.modal-jenis-metode').val(jenis)
-            modal.find('.modal-via-metode').val(via);
-        });
-        $('.change').on('change', function() {
-            let value = $(this).data('set')
-            let type = $(this).data('type')
-            $.ajax({
-                url: "{{ route('change.status.metode-pembayaran') }}",
-                data: {
-                    value,
-                    type
-                },
-                success: function(res) {
-                    alert(res);
-                    location.reload();
-                },
-                error: function(err) {
-                    alert(err)
-                }
-            })
-        });
-    </script>
-@endpush

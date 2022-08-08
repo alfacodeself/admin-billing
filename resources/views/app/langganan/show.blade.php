@@ -90,26 +90,15 @@
                                                 </div>
                                             </div>
                                             <div class="contact-information">
-                                                <h4>Alamat Pemasangan</h4>
-                                                <div class="phone-content">
-                                                    <span class="contact-title">Provinsi</span>
-                                                    <span class="phone-number">{{ $langganan->nama_provinsi }}</span>
-                                                </div>
-                                                <div class="email-content">
-                                                    <span class="contact-title">Kabupaten</span>
-                                                    <span class="contact-email">{{ $langganan->nama_kabupaten }}</span>
-                                                </div>
-                                                <div class="email-content">
-                                                    <span class="contact-title">Kecamatan</span>
-                                                    <span class="contact-email">{{ $langganan->nama_kecamatan }}</span>
-                                                </div>
-                                                <div class="email-content">
-                                                    <span class="contact-title">Desa</span>
-                                                    <span class="contact-email">{{ $langganan->nama_desa }}</span>
-                                                </div>
-                                            </div>
-                                            <div class="contact-information">
-                                                <h4>Keterangan Berlangganan Saat Ini</h4>
+                                                <h4>
+                                                    Keterangan Berlangganan Saat Ini
+                                                    @if (\Carbon\Carbon::parse($detailLangganan->tanggal_kadaluarsa) < \Carbon\Carbon::now('+0700') && $detailLangganan->status_pembayaran == 'l')
+                                                    {{-- <a href="">Test</a> --}}
+                                                    <a href="{{ route('langganan.editjenislangganan', $langganan->kode_langganan) }}" class="btn btn-link p-0 my-0 mx-2">
+                                                        <i class="ti-pencil-alt text-primary font-weight-bold"></i>
+                                                    </a>
+                                                    @endif
+                                                </h4>
                                                 <div class="gender-content">
                                                     <span class="contact-title">Tanggal Mulai</span>
                                                     <span class="gender">{{ $detailLangganan->tanggal_mulai ?? '-' }}</span>
@@ -129,6 +118,34 @@
                                                 <div class="gender-content">
                                                     <span class="contact-title">Status</span>
                                                     <span class="gender">{{ $detailLangganan->status_pembayaran == 'bl' ? 'Belum Lunas' : 'Lunas' }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="contact-information">
+                                                <h4>Alamat Pemasangan</h4>
+                                                <div class="phone-content">
+                                                    <span class="contact-title">Provinsi</span>
+                                                    <span class="phone-number">{{ $langganan->nama_provinsi }}</span>
+                                                </div>
+                                                <div class="email-content">
+                                                    <span class="contact-title">Kabupaten</span>
+                                                    <span class="contact-email">{{ $langganan->nama_kabupaten }}</span>
+                                                </div>
+                                                <div class="email-content">
+                                                    <span class="contact-title">Kecamatan</span>
+                                                    <span class="contact-email">{{ $langganan->nama_kecamatan }}</span>
+                                                </div>
+                                                <div class="email-content">
+                                                    <span class="contact-title">Desa</span>
+                                                    <span class="contact-email">{{ $langganan->nama_desa }}</span>
+                                                </div>
+                                                <div class="email-content">
+                                                    <span class="contact-title">RT/RW</span>
+                                                    <span class="contact-email">{{ $langganan->rt .' / ' . $langganan->rw }}</span>
+                                                </div>
+                                                <div class="contact-information">
+                                                    <h4>Pemetaan</h4>
+                                                    <div id="addressMap" style="width: 100%; height:300px;"></div>
+                                                    {{ $langganan->alamat_pemasangan }}
                                                 </div>
                                             </div>
                                         </div>
@@ -240,146 +257,6 @@
             </div>
         </div>
     </section>
-    {{-- Modals --}}
-    <div class="modal fade" id="editModalMetode" tabindex="-1" role="dialog" aria-labelledby="editCategory"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Metode Pembayaran</h5>
-                </div>
-                <form action="" method="post" enctype="multipart/form-data" class="modal-route-metode">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body px-4">
-                        <div class="form-group">
-                            <label for="logo">Logo</label>
-                            <input type="file" class="form-control" id="logo" name="logo" placeholder="">
-                            <small>
-                                <strong>
-                                    <a href="" class="modal-logo-metode" class="text-info" target="__blank">Link logo sekarang!</a>
-                                </strong>
-                            </small>
-                            @error('logo')
-                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="metode-bayar">Metode Pembayaran</label>
-                            <select name="metode_bayar" id="metode-bayar" class="form-control modal-jenis-metode">
-                                <option value="Bank Transfer">Bank Transfer</option>
-                                <option value="E Money">E Money</option>
-                                <option value="Direct Debit">Direct Debit</option>
-                            </select>
-                            @error('metode-bayar')
-                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="via">Via</label>
-                            <input type="text" class="form-control modal-via-metode text-capitalize" id="via" name="via" placeholder="">
-                            @error('via')
-                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Ubah Metode Pembayaran</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    {{-- modal bagi hasil --}}
-    <div class="modal fade" id="tambahModalBagi" tabindex="-1" role="dialog" aria-labelledby="tambahCategory"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Pengaturan Bagi Hasil Mitra</h5>
-                </div>
-                <form action="{{ route('bagi-hasil.store') }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    @method('POST')
-                    <div class="modal-body px-4">
-                        <div class="form-group">
-                            <label for="keterangan">Keterangan</label>
-                            <input type="text" class="form-control" id="keterangan" name="keterangan" placeholder="">
-                            @error('keterangan')
-                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="besaran">Besaran</label>
-                            <input type="number" class="form-control" id="besaran" name="besaran" placeholder="">
-                            @error('besaran')
-                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="jenis">Jenis Bagi Hasil</label>
-                            <select name="jenis" id="jenis" class="form-control">
-                                <option value="p">Persentase</option>
-                                <option value="f">Flat</option>
-                            </select>
-                            @error('jenis')
-                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Buat Pengaturan Bagi Hasil</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="updateModalBagi" tabindex="-1" role="dialog" aria-labelledby="tambahCategory"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Ubah Pengaturan Bagi Hasil Mitra</h5>
-                </div>
-                <form action="" method="post" class="modal-route-metode" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body px-4">
-                        <div class="form-group">
-                            <label for="keterangan">Keterangan</label>
-                            <input type="text" class="form-control modal-keterangan-metode" id="keterangan" name="keterangan" placeholder="">
-                            @error('keterangan')
-                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="besaran">Besaran</label>
-                            <input type="number" class="form-control modal-besaran-metode" id="besaran" name="besaran" placeholder="">
-                            @error('besaran')
-                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="jenis">Jenis Bagi Hasil</label>
-                            <select name="jenis" id="jenis" class="form-control modal-jenis-metode">
-                                <option value="p">Persentase</option>
-                                <option value="f">Flat</option>
-                            </select>
-                            @error('jenis')
-                                <p class="text-danger"><small><strong>{{ $message }}</strong></small></p>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Buat Pengaturan Bagi Hasil</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 @endsection
 @push('css')
     <style>
@@ -426,50 +303,31 @@
 @endpush
 @push('js')
     <script>
-        $('#updateModalBagi').on('show.bs.modal', function(event){
-            const button = $(event.relatedTarget)
-
-            let keterangan = button.data('keterangan');
-            let besaran = button.data('besaran');
-            let jenis = button.data('jenis');
-            let route = button.data('route');
-
-            let modal = $(this)
-            modal.find('.modal-route-metode').attr('action', route)
-            modal.find('.modal-jenis-metode').val(jenis)
-            modal.find('.modal-keterangan-metode').val(keterangan);
-            modal.find('.modal-besaran-metode').val(besaran);
-        });
-        $('#editModalMetode').on('show.bs.modal', function(event){
-            const button = $(event.relatedTarget)
-
-            let logo = button.data('logo');
-            let jenis = button.data('jenis');
-            let via = button.data('via');
-            let route = button.data('route');
-
-            let modal = $(this)
-            modal.find('.modal-logo-metode').attr('href', logo)
-            modal.find('.modal-route-metode').attr('action', route)
-            modal.find('.modal-jenis-metode').val(jenis)
-            modal.find('.modal-via-metode').val(via);
-        });
-        $('.change').on('change', function(){
-            let value = $(this).data('set')
-            let type = $(this).data('type')
-            $.ajax({
-                url:"{{ route('change.status.metode-pembayaran') }}",
-                data:{
-                    value, type
+        const userLat = {{ $langganan->latitude == null ? '-7.756928' : $langganan->latitude }};
+        const userLng = {{ $langganan->longitude == null ? '113.211502' : $langganan->longitude }};
+        // let address, map;
+        // console.log(userLat, userLng);
+        function initMap() {
+            // Show MAP
+            address = new google.maps.Map(document.getElementById("addressMap"), {
+                center: {
+                    lat: userLat,
+                    lng: userLng
                 },
-                success:function(res){
-                    alert(res);
-                    location.reload();
+                zoom: 16,
+                scrollwheel: true,
+            });
+            let addressMarker = new google.maps.Marker({
+                position: {
+                    lat: userLat,
+                    lng: userLng
                 },
-                error:function(err){
-                    alert(err)
-                }
-            })
-        });
+                map: address,
+                draggable: false
+            });
+        }
+    </script>
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyCWY-q7-nQ4ESJpVa1Jx4ErwzDCoJ73cAo&callback=initMap&libraries=&v=weekly">
     </script>
 @endpush

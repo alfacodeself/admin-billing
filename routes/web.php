@@ -66,6 +66,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('detail-mitra/{id}/update-foto', [MitraController::class, 'updateFoto'])->name('mitra.show.update-foto')->middleware('can:edit mitra');
         Route::put('detail-mitra/{id}/update-profil', [MitraController::class, 'updateProfil'])->name('mitra.show.update-profil')->middleware('can:edit mitra');
         Route::put('detail-mitra/{id}/update-dokumen', [MitraController::class, 'updateDokumen'])->name('mitra.show.update-dokumen')->middleware('can:edit mitra');
+        Route::put('detail-mitra/{id}/update-bagi-hasil', [MitraController::class, 'updateBagiHasil'])->name('mitra.show.update-bagi-hasil')->middleware('can:pengaturan pembayaran');
         Route::get('mitra-pelanggan', [MitraController::class, 'pelanggan_mitra'])->name('mitra.mitra-pelanggan.index')->middleware('can:detail mitra');
         Route::delete('delete-mitra/{id}', [MitraController::class, 'destroy'])->name('mitra.destroy')->middleware('can:hapus mitra');
         // Route::get('verifikasi-mitra', [MitraController::class, 'verifikasi_mitra'])->name('mitra.verifikasi.index');
@@ -78,6 +79,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('verifikasi/{id}/ditolak', [LanggananController::class, 'reject'])->name('langganan.verifikasi.reject')->middleware('can:verifikasi langganan');
         Route::put('verifikasi/{id}/diterima', [LanggananController::class, 'verify'])->name('langganan.verifikasi.verify')->middleware('can:verifikasi langganan');
         Route::get('detail-langganan/{id}', [LanggananController::class, 'show'])->name('langganan.show')->middleware('can:detail langganan');
+        Route::get('detail-langganan/{id}/edit-jenis-langganan', [LanggananController::class, 'editJenisLangganan'])->name('langganan.editjenislangganan')->middleware(['can:detail langganan']);
+        Route::post('detail-langganan/{id}/update-jenis-langganan', [LanggananController::class, 'updateJenisLangganan'])->name('langganan.updatejenislangganan')->middleware(['can:detail langganan']);
         Route::get('jadwal-instalasi', [LanggananController::class, 'schedule'])->name('langganan.schedule')->middleware('can:jadwal langganan');
         Route::get('cari-langganan', [LanggananController::class, 'searchSchedule'])->name('cari.langganan')->middleware('can:tambah jadwal langganan');
         Route::post('pengajuan-instalasi-langganan', [LanggananController::class, 'makeSchedule'])->name('pengajuan.instalasi.store')->middleware('can:tambah jadwal langganan');
@@ -104,6 +107,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
         Route::prefix('role-permission')->group(function () {
             Route::get('/', [RolePermissionController::class, 'index'])->name('pengaturan.rolepermission.index')->middleware('can:pengaturan role permission');
+            Route::get('{id}/histori-jabatan-permisssion', [RolePermissionController::class, 'show'])->name('pengaturan.rolepermission.show')->middleware('can:pengaturan role permission');
             Route::get('{id}/edit', [RolePermissionController::class, 'edit'])->name('pengaturan.rolepermission.edit')->middleware('can:pengaturan role permission');
             Route::post('{id}/update', [PetugasController::class, 'updateJabatan'])->name('pengaturan.rolepermission.store')->middleware('can:pengaturan role permission');
             Route::put('{id}/off', [PetugasController::class, 'offPermission'])->name('pengaturan.rolepermission.offPermission')->middleware('can:pengaturan role permission');
@@ -117,8 +121,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             });
             Route::prefix('pengaturan-bagi-hasil')->group(function () {
                 Route::post('/', [BagiHasilController::class, 'store'])->name('bagi-hasil.store')->middleware('can:pengaturan pembayaran');
-                Route::put('/{id}', [BagiHasilController::class, 'update'])->name('bagi-hasil.update')->middleware('can:pengaturan pembayaran');
-                Route::delete('/{id}', [BagiHasilController::class, 'destroy'])->name('bagi-hasil.delete')->middleware('can:pengaturan pembayaran');
             });
             Route::prefix('jenis-pembayaran')->group(function(){
                 Route::post('/', [JenisPembayaranController::class, 'store'])->name('jenis-bayar.store')->middleware('can:pengaturan pembayaran');

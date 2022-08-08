@@ -19,21 +19,6 @@ class PengaturanBagiHasilSeeder extends Seeder
             'besaran'                   =>  3,
             'status_jenis'              =>  'p',
             'status'                    =>  'a',
-            'keterangan'                =>  'Mitra Umum'
-        ]);
-        PengaturanBagiHasil::create([
-            'id_pengaturan_bagi_hasil'  =>  'PBH0002',
-            'besaran'                   =>  20000,
-            'status_jenis'              =>  'f',
-            'status'                    =>  'a',
-            'keterangan'                =>  'Mitra Pelanggan Dekat'
-        ]);
-        PengaturanBagiHasil::create([
-            'id_pengaturan_bagi_hasil'  =>  'PBH0003',
-            'besaran'                   =>  10,
-            'status_jenis'              =>  'p',
-            'status'                    =>  'a',
-            'keterangan'                =>  'Test Pengaturan Bagi Hasil Mitra'
         ]);
     }
 }

@@ -100,7 +100,7 @@ class BankTransfer {
             // Inisial tanggal selesai dari tabel detail langganan
             $tgl_selesai = Carbon::parse($detail_langganan->tanggal_selesai);
             // Inisial tanggal kadaluarsa berdasarkan quantity transaksi
-            $tgl_expired = Carbon::now()->addMonths($qty);
+            $tgl_expired = Carbon::now('+0700')->addMonths($qty);
             // Kalau tanggal expired lebih besar dari tanggal selesai dan status berlangganan nya false
             if ($tgl_expired > $tgl_selesai && !$detail_langganan->jenis_langganan->status_berlangganan) {
                 // Update tanggal selesai sama dengan expired
@@ -127,7 +127,7 @@ class BankTransfer {
             'merchant_id' => 'G' . Str::upper(Str::random(5)),
             'transaction_status' => 'settlement',
             'fraud_status' => 'accept',
-            'transaction_time' => Carbon::now()
+            'transaction_time' => Carbon::now('+0700')
         ];
         return $data;
     }

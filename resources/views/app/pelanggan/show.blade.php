@@ -32,9 +32,9 @@
                         <h5 class="card-title">{{ $pelanggan->nama_pelanggan }}</h5>
                         <p class="card-text">{{ $pelanggan->alamat }}</p>
                         @can('edit pelanggan')
-                        <button class="btn btn-primary" data-toggle="modal" data-target="#fotoModal">Ubah Foto
-                            Pelanggan
-                        </button>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#fotoModal">Ubah Foto
+                                Pelanggan
+                            </button>
                         @endcan
                     </div>
                 </div>
@@ -75,10 +75,10 @@
                                         <li role="presentation" class="active">
                                             <a aria-controls="1" role="tab" data-toggle="tab">Tentang</a>
                                             @can('edit pelanggan')
-                                            <button class="btn btn-link p-0 m-0" data-toggle="modal"
-                                            data-target="#profilModal">
-                                                <i class="ti-pencil-alt text-primary font-weight-bold"></i>
-                                            </button>
+                                                <button class="btn btn-link p-0 m-0" data-toggle="modal"
+                                                    data-target="#profilModal">
+                                                    <i class="ti-pencil-alt text-primary font-weight-bold"></i>
+                                                </button>
                                             @endcan
                                         </li>
                                     </ul>
@@ -126,10 +126,10 @@
                                         <li role="presentation" class="active">
                                             <a aria-controls="1" role="tab" data-toggle="tab">Alamat</a>
                                             @can('edit pelanggan')
-                                            <button class="btn btn-link p-0 m-0" data-toggle="modal"
-                                            data-target="#alamatModal">
-                                                <i class="ti-pencil-alt text-primary font-weight-bold"></i>
-                                            </button>
+                                                <button class="btn btn-link p-0 m-0" data-toggle="modal"
+                                                    data-target="#alamatModal">
+                                                    <i class="ti-pencil-alt text-primary font-weight-bold"></i>
+                                                </button>
                                             @endcan
                                         </li>
                                     </ul>
@@ -180,10 +180,10 @@
                                         <li role="presentation" class="active">
                                             <a aria-controls="1" role="tab" data-toggle="tab">Dokumen</a>
                                             @can('edit pelanggan')
-                                            <button class="btn btn-link p-0 m-0" data-toggle="modal"
-                                            data-target="#dokumenModal">
-                                                <i class="ti-pencil-alt text-primary font-weight-bold"></i>
-                                            </button>
+                                                <button class="btn btn-link p-0 m-0" data-toggle="modal"
+                                                    data-target="#dokumenModal">
+                                                    <i class="ti-pencil-alt text-primary font-weight-bold"></i>
+                                                </button>
                                             @endcan
                                         </li>
                                     </ul>
@@ -194,10 +194,12 @@
                                                 @foreach ($pelanggan->dokumen_pelanggan as $dokumen)
                                                     @if ($dokumen->jenis_dokumen->status == 'a')
                                                         <div class="birthday-content">
-                                                            <span class="contact-title">{{ $dokumen->jenis_dokumen->nama_dokumen }}:</span>
+                                                            <span
+                                                                class="contact-title">{{ $dokumen->jenis_dokumen->nama_dokumen }}:</span>
                                                             <span class="birth-date">
                                                                 <a href="{{ url($dokumen->path_dokumen) }}"
-                                                                    class="btn btn-link text-success py-0" target="__blank">
+                                                                    class="btn btn-link text-success py-0"
+                                                                    target="__blank">
                                                                     <i class="ti-files font-weight-bold text-primary"></i>
                                                                     Link {{ $dokumen->jenis_dokumen->nama_dokumen }}
                                                                 </a>
@@ -219,272 +221,285 @@
     {{-- ===============> Modal Section <======================= --}}
     @can('edit pelanggan')
         <div class="modal fade" id="dokumenModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Ubah Dokumen Pelanggan</h5>
-                </div>
-                <form action="{{ route('pelanggan.show.update-dokumen', $pelanggan->id_pelanggan) }}" enctype="multipart/form-data" method="post" class="form-horizontal">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body px-5">
-                        <div class="form-group">
-                            @foreach ($jenis_dokumen as $dokumen)
-                                @php
-                                    $name = Str::lower(str_replace(' ', '_', $dokumen->nama_dokumen));
-                                @endphp
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label for="id_provinsi">{{ $dokumen->nama_dokumen }}</label>
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ubah Dokumen Pelanggan</h5>
+                    </div>
+                    <form action="{{ route('pelanggan.show.update-dokumen', $pelanggan->id_pelanggan) }}"
+                        enctype="multipart/form-data" method="post" class="form-horizontal">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body px-5">
+                            <div class="form-group">
+                                @foreach ($jenis_dokumen as $dokumen)
+                                    @php
+                                        $name = Str::lower(str_replace(' ', '_', $dokumen->nama_dokumen));
+                                    @endphp
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label for="id_provinsi">{{ $dokumen->nama_dokumen }}</label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="file" class="form-control form-control"
+                                                name="{{ $name }}">
+                                            @error($name)
+                                                <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
+                                            @enderror
+                                        </div>
                                     </div>
-                                    <div class="col-md-8">
-                                        <input type="file" class="form-control form-control" name="{{ $name }}">
-                                        @error($name)
-                                            <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Update Dokumen Pelanggan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="alamatModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ubah Alamat Pelanggan</h5>
+                    </div>
+                    <form action="{{ route('pelanggan.show.update-alamat', $pelanggan->id_pelanggan) }}" method="post"
+                        class="form-horizontal">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body px-5">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <label for="id_provinsi">Provinsi</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <select name="provinsi" id="provinsi" class="form-control"
+                                                    onchange="updateKabupaten()">
+                                                    <option value="" selected disabled>Pilih Provinsi</option>
+                                                    @forelse ($provinsi as $p)
+                                                        <option value="{{ $p->id_provinsi }}"
+                                                            {{ old('provinsi') == $p->id_provinsi ? 'selected' : '' }}>
+                                                            {{ $p->nama_provinsi }}
+                                                        </option>
+                                                    @empty
+                                                        <option>Tidak ada provinsi!</option>
+                                                    @endforelse
+                                                </select>
+                                                @error('provinsi')
+                                                    <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <label for="kabupaten">Kabupaten</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <select name="kabupaten" id="kabupaten" Class="form-control"
+                                                    onchange="updateKecamatan()" disabled>
+                                                    <option value="" selected>Pilih Kabupaten</option>
+                                                </select>
+                                                @error('kabupaten')
+                                                    <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <label for="kecamatan">Kecamatan</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <select name="kecamatan" id="kecamatan" class="form-control"
+                                                    onchange="updateDesa()" disabled>
+                                                    <option value="" selected>Pilih Kecamatan</option>
+                                                </select>
+                                                @error('kecamatan')
+                                                    <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <label for="desa">Desa</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <select name="desa" id="desa" class="form-control" disabled>
+                                                    <option value="" selected disabled>Pilih Desa</option>
+                                                </select>
+                                                @error('desa')
+                                                    <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <label for="rt/rw">RT/RW</label>
+                                            </div>
+                                            <div class="col-md-4 col-sm-6">
+                                                <input type="number" value="{{ old('rt') }}" name="rt"
+                                                    id="rt/rw" class="form-control" placeholder="RT">
+                                                @error('rt')
+                                                    <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-4 col-sm-6">
+                                                <input type="number" value="{{ old('rw') }}" name="rw"
+                                                    id="rt/rw" class="form-control" placeholder="RW">
+                                                @error('rw')
+                                                    <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3"><label for="alamat">Alamat Lengkap</label></div>
+                                            <div class="col-md-8">
+                                                <textarea name="alamat" id="alamat" class="form-control" style="height: 100px">{{ old('alamat') }}</textarea>
+                                                @error('alamat')
+                                                    <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="map" style="height: 370px; width:100%"></div>
+                                    <input type="hidden" name="longitude" id="longitude" value="{{ old('latitude') }}"
+                                        readonly>
+                                    <input type="hidden" name="latitude" id="latitude" value="{{ old('langitude') }}"
+                                        readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Update Alamat Pelanggan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="profilModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ubah Profil Pelanggan</h5>
+                    </div>
+                    <form action="{{ route('pelanggan.show.update-profil', $pelanggan->id_pelanggan) }}" method="post"
+                        class="form-horizontal">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body px-5">
+                            <div class="form-group">
+                                <div class="row">
+                                    <label class="col-sm-4 control-label">Nama</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="nama"
+                                            value="{{ $pelanggan->nama_pelanggan }}" placeholder="Nama">
+                                        @error('nama')
+                                            <small><strong class="text-danger">{{ $message }}</strong></small>
                                         @enderror
                                     </div>
                                 </div>
-                            @endforeach
+                                <div class="row">
+                                    <label class="col-sm-4 control-label">NIK</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" class="form-control" name="nik"
+                                            value="{{ $pelanggan->nik }}" placeholder="NIK">
+                                        @error('nik')
+                                            <small><strong class="text-danger">{{ $message }}</strong></small>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-sm-4 control-label">Jenis Kelamin</label>
+                                    <div class="col-sm-8">
+                                        <input type="radio" name="jenis_kelamin" value="l"
+                                            {{ $pelanggan->jenis_kelamin == 'l' ? 'checked' : '' }}> Laki-Laki
+                                        <input type="radio" name="jenis_kelamin" value="p"
+                                            {{ $pelanggan->jenis_kelamin == 'p' ? 'checked' : '' }}> Perempuan
+                                        @error('nik')
+                                            <br>
+                                            <small><strong class="text-danger">{{ $message }}</strong></small>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-sm-4 control-label">Email</label>
+                                    <div class="col-sm-8">
+                                        <input type="email" class="form-control" name="email"
+                                            value="{{ $pelanggan->email }}" placeholder="Email">
+                                        @error('email')
+                                            <small><strong class="text-danger">{{ $message }}</strong></small>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-sm-4 control-label">No. Handphone</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" class="form-control" name="nomor_hp"
+                                            value="{{ $pelanggan->nomor_hp }}" placeholder="No Handphone">
+                                        @error('nomor_hp')
+                                            <small><strong class="text-danger">{{ $message }}</strong></small>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-sm-4 control-label">Status</label>
+                                    <div class="col-sm-8">
+                                        <select name="status" id="status" name="status" class="form-control">
+                                            <option value="a" {{ $pelanggan->status == 'a' ? 'selected' : '' }}>Aktif
+                                            </option>
+                                            <option value="n" {{ $pelanggan->status == 'n' ? 'selected' : '' }}>
+                                                Nonaktif</option>
+                                        </select>
+                                        @error('status')
+                                            <small><strong class="text-danger">{{ $message }}</strong></small>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update Dokumen Pelanggan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="alamatModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Ubah Alamat Pelanggan</h5>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Update Profil Pelanggan</button>
+                        </div>
+                    </form>
                 </div>
-                <form action="{{ route('pelanggan.show.update-alamat', $pelanggan->id_pelanggan) }}" method="post" class="form-horizontal">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body px-5">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <label for="id_provinsi">Provinsi</label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <select name="provinsi" id="provinsi" class="form-control" onchange="updateKabupaten()">
-                                                <option value="" selected disabled>Pilih Provinsi</option>
-                                                @forelse ($provinsi as $p)
-                                                    <option value="{{ $p->id_provinsi }}" {{ old('provinsi') == $p->id_provinsi ? 'selected' : '' }}>
-                                                        {{ $p->nama_provinsi }}
-                                                    </option>
-                                                @empty
-                                                    <option>Tidak ada provinsi!</option>
-                                                @endforelse
-                                            </select>
-                                            @error('provinsi')
-                                                <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <label for="kabupaten">Kabupaten</label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <select name="kabupaten" id="kabupaten" Class="form-control" onchange="updateKecamatan()" disabled>
-                                                <option value="" selected>Pilih Kabupaten</option>
-                                            </select>
-                                            @error('kabupaten')
-                                                <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <label for="kecamatan">Kecamatan</label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <select name="kecamatan" id="kecamatan" class="form-control" onchange="updateDesa()" disabled>
-                                                <option value="" selected>Pilih Kecamatan</option>
-                                            </select>
-                                            @error('kecamatan')
-                                                <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <label for="desa">Desa</label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <select name="desa" id="desa" class="form-control" disabled>
-                                                <option value="" selected disabled>Pilih Desa</option>
-                                            </select>
-                                            @error('desa')
-                                                <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <label for="rt/rw">RT/RW</label>
-                                        </div>
-                                        <div class="col-md-4 col-sm-6">
-                                            <input type="number" value="{{ old('rt') }}" name="rt" id="rt/rw" class="form-control" placeholder="RT">
-                                            @error('rt')
-                                                <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-4 col-sm-6">
-                                            <input type="number" value="{{ old('rw') }}" name="rw" id="rt/rw" class="form-control" placeholder="RW">
-                                            @error('rw')
-                                                <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3"><label for="alamat">Alamat Lengkap</label></div>
-                                        <div class="col-md-8">
-                                            <textarea name="alamat" id="alamat" class="form-control" style="height: 100px">{{ old('alamat') }}</textarea>
-                                            @error('alamat')
-                                                <p><small><strong class="text-danger">{{ $message }}</strong></small></p>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div id="map" style="height: 370px; width:100%"></div>
-                                <input type="hidden" name="longitude" id="longitude" value="{{ old('latitude') }}" readonly>
-                                <input type="hidden" name="latitude" id="latitude" value="{{ old('langitude') }}" readonly>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update Alamat Pelanggan</button>
-                    </div>
-                </form>
             </div>
         </div>
-    </div>
-    <div class="modal fade" id="profilModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Ubah Profil Pelanggan</h5>
+        <div class="modal fade" id="fotoModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ubah Foto Pelanggan</h5>
+                    </div>
+                    <form action="{{ route('pelanggan.show.update-foto', $pelanggan->id_pelanggan) }}" method="post"
+                        enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="foto">Foto Pelanggan</label>
+                                <input type="file" name="foto" id="foto" class="form-control">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Upload Foto Pelanggan</button>
+                        </div>
+                    </form>
                 </div>
-                <form action="{{ route('pelanggan.show.update-profil', $pelanggan->id_pelanggan) }}" method="post" class="form-horizontal">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body px-5">
-                        <div class="form-group">
-                            <div class="row">
-                                <label class="col-sm-4 control-label">Nama</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="nama"
-                                        value="{{ $pelanggan->nama_pelanggan }}" placeholder="Nama">
-                                    @error('nama')
-                                        <small><strong class="text-danger">{{ $message }}</strong></small>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label class="col-sm-4 control-label">NIK</label>
-                                <div class="col-sm-8">
-                                    <input type="number" class="form-control" name="nik"
-                                        value="{{ $pelanggan->nik }}" placeholder="NIK">
-                                    @error('nik')
-                                        <small><strong class="text-danger">{{ $message }}</strong></small>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label class="col-sm-4 control-label">Jenis Kelamin</label>
-                                <div class="col-sm-8">
-                                    <input type="radio" name="jenis_kelamin" value="l"
-                                        {{ $pelanggan->jenis_kelamin == 'l' ? 'checked' : '' }}> Laki-Laki
-                                    <input type="radio" name="jenis_kelamin" value="p"
-                                        {{ $pelanggan->jenis_kelamin == 'p' ? 'checked' : '' }}> Perempuan
-                                    @error('nik')
-                                        <br>
-                                        <small><strong class="text-danger">{{ $message }}</strong></small>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label class="col-sm-4 control-label">Email</label>
-                                <div class="col-sm-8">
-                                    <input type="email" class="form-control" name="email"
-                                        value="{{ $pelanggan->email }}" placeholder="Email">
-                                    @error('email')
-                                        <small><strong class="text-danger">{{ $message }}</strong></small>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label class="col-sm-4 control-label">No. Handphone</label>
-                                <div class="col-sm-8">
-                                    <input type="number" class="form-control" name="nomor_hp"
-                                        value="{{ $pelanggan->nomor_hp }}" placeholder="No Handphone">
-                                    @error('nomor_hp')
-                                        <small><strong class="text-danger">{{ $message }}</strong></small>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label class="col-sm-4 control-label">Status</label>
-                                <div class="col-sm-8">
-                                    <select name="status" id="status" name="status" class="form-control">
-                                        <option value="a" {{ $pelanggan->status == 'a' ? 'selected' : '' }}>Aktif
-                                        </option>
-                                        <option value="n" {{ $pelanggan->status == 'n' ? 'selected' : '' }}>
-                                            Nonaktif</option>
-                                    </select>
-                                    @error('status')
-                                        <small><strong class="text-danger">{{ $message }}</strong></small>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update Profil Pelanggan</button>
-                    </div>
-                </form>
             </div>
         </div>
-    </div>
-    <div class="modal fade" id="fotoModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Ubah Foto Pelanggan</h5>
-                </div>
-                <form action="{{ route('pelanggan.show.update-foto', $pelanggan->id_pelanggan) }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="foto">Foto Pelanggan</label>
-                            <input type="file" name="foto" id="foto" class="form-control">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Upload Foto Pelanggan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     @endcan
 @endsection
 @push('css')
@@ -529,8 +544,7 @@
         }
     </style>
 @endpush
-@can('edit pelanggan')
-    @push('js')
+@push('js')
     <script>
         const userLat = {{ $pelanggan->latitude == null ? '-7.756928' : $pelanggan->latitude }};
         const userLng = {{ $pelanggan->longitude == null ? '113.211502' : $pelanggan->longitude }};
@@ -591,80 +605,81 @@
         src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyCWY-q7-nQ4ESJpVa1Jx4ErwzDCoJ73cAo&callback=initMap&libraries=&v=weekly">
     </script>
 
-    <script>
-        function updateKabupaten() {
-            let prov = $('#provinsi').val();
-            $('#kabupaten').children().remove();
-            $('#kabupaten').val('');
-            $('#kabupaten').append('<option value="" selected disabled>Pilih Kabupaten</option>');
-            $('#kabupaten').prop('disabled', true);
-            updateKecamatan();
-            var url = '{{ route('kabupaten.update', ':id') }}';
-            url = url.replace(':id', prov);
-            if (prov != '' && prov != null) {
-                $.ajax({
-                    url,
-                    success: function(res) {
-                        $('#kabupaten').prop('disabled', false);
-                        let html = '';
-                        $.each(res, function(index, data) {
-                            html += '<option value="' + data.id_kabupaten + '">' + data.nama_kabupaten +
-                                '</option>';
-                        })
-                        $('#kabupaten').append(html)
-                    }
-                })
+    @can('edit pelanggan')
+        <script>
+            function updateKabupaten() {
+                let prov = $('#provinsi').val();
+                $('#kabupaten').children().remove();
+                $('#kabupaten').val('');
+                $('#kabupaten').append('<option value="" selected disabled>Pilih Kabupaten</option>');
+                $('#kabupaten').prop('disabled', true);
+                updateKecamatan();
+                var url = '{{ route('kabupaten.update', ':id') }}';
+                url = url.replace(':id', prov);
+                if (prov != '' && prov != null) {
+                    $.ajax({
+                        url,
+                        success: function(res) {
+                            $('#kabupaten').prop('disabled', false);
+                            let html = '';
+                            $.each(res, function(index, data) {
+                                html += '<option value="' + data.id_kabupaten + '">' + data.nama_kabupaten +
+                                    '</option>';
+                            })
+                            $('#kabupaten').append(html)
+                        }
+                    })
+                }
             }
-        }
 
-        function updateKecamatan() {
-            let kab = $('#kabupaten').val();
-            $('#kecamatan').children().remove();
-            $('#kecamatan').val('');
-            $('#kecamatan').append('<option value="" selected disabled>Pilih Kecamatan</option>');
-            $('#kecamatan').prop('disabled', true);
-            updateDesa();
-            var url = '{{ route('kecamatan.update', ':id') }}';
-            url = url.replace(':id', kab);
-            if (kab != '' && kab != null) {
-                $.ajax({
-                    url,
-                    success: function(res) {
-                        $('#kecamatan').prop('disabled', false);
-                        let html = '';
-                        $.each(res, function(index, data) {
-                            html += '<option value="' + data.id_kecamatan + '">' + data.nama_kecamatan +
-                                '</option>';
-                        })
-                        $('#kecamatan').append(html)
-                    }
-                })
+            function updateKecamatan() {
+                let kab = $('#kabupaten').val();
+                $('#kecamatan').children().remove();
+                $('#kecamatan').val('');
+                $('#kecamatan').append('<option value="" selected disabled>Pilih Kecamatan</option>');
+                $('#kecamatan').prop('disabled', true);
+                updateDesa();
+                var url = '{{ route('kecamatan.update', ':id') }}';
+                url = url.replace(':id', kab);
+                if (kab != '' && kab != null) {
+                    $.ajax({
+                        url,
+                        success: function(res) {
+                            $('#kecamatan').prop('disabled', false);
+                            let html = '';
+                            $.each(res, function(index, data) {
+                                html += '<option value="' + data.id_kecamatan + '">' + data.nama_kecamatan +
+                                    '</option>';
+                            })
+                            $('#kecamatan').append(html)
+                        }
+                    })
+                }
             }
-        }
 
-        function updateDesa() {
-            let kec = $('#kecamatan').val();
-            $('#desa').children().remove();
-            $('#desa').val('');
-            $('#desa').append('<option value="" selected disabled>Pilih Desa</option>');
-            $('#desa').prop('disabled', true);
-            var url = '{{ route('desa.update', ':id') }}';
-            url = url.replace(':id', kec);
-            if (kec != '' && kec != null) {
-                $.ajax({
-                    url,
-                    success: function(res) {
-                        $('#desa').prop('disabled', false);
-                        let html = '';
-                        $.each(res, function(index, data) {
-                            html += '<option value="' + data.id_desa + '">' + data.nama_desa + ' (' +
-                                data.kode_pos + ')</option>';
-                        })
-                        $('#desa').append(html)
-                    }
-                })
+            function updateDesa() {
+                let kec = $('#kecamatan').val();
+                $('#desa').children().remove();
+                $('#desa').val('');
+                $('#desa').append('<option value="" selected disabled>Pilih Desa</option>');
+                $('#desa').prop('disabled', true);
+                var url = '{{ route('desa.update', ':id') }}';
+                url = url.replace(':id', kec);
+                if (kec != '' && kec != null) {
+                    $.ajax({
+                        url,
+                        success: function(res) {
+                            $('#desa').prop('disabled', false);
+                            let html = '';
+                            $.each(res, function(index, data) {
+                                html += '<option value="' + data.id_desa + '">' + data.nama_desa + ' (' +
+                                    data.kode_pos + ')</option>';
+                            })
+                            $('#desa').append(html)
+                        }
+                    })
+                }
             }
-        }
-    </script>
-@endpush
+        </script>
+    @endpush
 @endcan
