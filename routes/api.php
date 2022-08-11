@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\Mitra\Auth\{LoginMitraController, LogoutMitraController, RegisterMitraController, VerifikasiEmailMitraController};
+use App\Http\Controllers\Api\Mitra\{DokumenMitraController, LanggananMitraController, PelangganMitraController, PemetaanLayananMitraController, ProfilMitraController};
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Pelanggan\Auth\{LoginController, LogoutApiController, RegisterController};
 use App\Http\Controllers\Api\Pelanggan\{AlamatApiController, DashboardApiController, DokumenApiController, LanggananApiController, PelangganApiController, ProdukApiController, TransaksiApiController};
 use App\Http\Controllers\TransaksiController;
-use App\Models\Pelanggan;
 
 Route::prefix('pelanggan')->group(function(){
     Route::prefix('auth')->group(function(){
@@ -47,12 +48,45 @@ Route::prefix('pelanggan')->group(function(){
         Route::post('logout', LogoutApiController::class);
     });
 });
-Route::get('pelanggan/all', function(){
-    return response()->json(Pelanggan::get());
-});
 Route::post('notification/transaction', [TransaksiController::class, 'notification']);
 Route::get('syarat-dokumen', [DokumenApiController::class, 'dokumen']);
 Route::get('provinsi', [AlamatApiController::class, 'provinsi']);
 Route::get('kabupaten/{id}', [AlamatApiController::class, 'kabupaten']);
 Route::get('kecamatan/{id}', [AlamatApiController::class, 'kecamatan']);
 Route::get('desa/{id}', [AlamatApiController::class, 'desa']);
+
+
+Route::prefix('mitra')->group(function(){
+    Route::prefix('auth')->group(function(){
+        Route::post('login', LoginMitraController::class);
+        Route::post('register', RegisterMitraController::class);
+        Route::post('email-verifikasi', [VerifikasiEmailMitraController::class, 'verify']);
+    });
+    Route::middleware('auth:mitra')->prefix('langganan')->group(function(){
+        Route::get('/', [LanggananMitraController::class, 'index']);
+        Route::get('kadaluarsa', [LanggananMitraController::class, 'langganan_kadaluarsa']);
+        Route::get('nonaktif', [LanggananMitraController::class, 'langganan_nonaktif']);
+        Route::get('nonaktif', [LanggananMitraController::class, 'langganan_nonaktif']);
+        Route::get('jadwal-instalasi', [LanggananMitraController::class, 'jadwal_instalasi']);
+    });
+    Route::middleware('auth:mitra')->prefix('pelanggan')->group(function(){
+        Route::get('/', [PelangganMitraController::class, 'index']);
+        Route::post('tambah-pelanggan', [PelangganMitraController::class, 'store']);
+        Route::get('nonaktif', [PelangganMitraController::class, 'pelanggan_nonaktif']);
+        Route::get('transaksi', [PelangganMitraController::class, 'transaksi_pelanggan']);
+        Route::get('transaksi/detail-transaksi/{id_transaksi}', [PelangganMitraController::class, 'detail_transaksi']);
+    });
+    Route::get('pemetaan-layanan', PemetaanLayananMitraController::class)->middleware('auth:mitra');
+    Route::middleware('auth:mitra')->prefix('profil')->group(function(){
+        Route::get('/', [ProfilMitraController::class, 'index']);
+        Route::put('update-profil', [ProfilMitraController::class, 'updateProfil']);
+        Route::put('update-akun', [ProfilMitraController::class, 'updateAccount']);
+    });
+    Route::middleware('auth:mitra')->prefix('dokumen')->group(function(){
+        Route::get('/', [DokumenMitraController::class, 'index']);
+        Route::post('tambah-dokumen', [DokumenMitraController::class, 'store']);
+        Route::post('update-dokumen', [DokumenMitraController::class, 'update']);
+        Route::get('syarat-dokumen', [DokumenMitraController::class, 'dokumen']);
+    });
+    Route::post('logout', LogoutMitraController::class)->middleware('auth:mitra');
+});

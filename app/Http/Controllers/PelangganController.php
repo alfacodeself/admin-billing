@@ -70,7 +70,6 @@ class PelangganController extends Controller
                 'password' => bcrypt('pelanggan123')
             ]);
             // ==========> Data Dokumen Pelanggan <=========
-
             foreach ($jenis_dokumen as $dokumen) {
                 $name = Str::lower(str_replace(' ', '_', $dokumen->nama_dokumen));
                 $checkDok = DB::table('dokumen_pelanggan')->select(DB::raw('MAX(RIGHT(id_dokumen_pelanggan, 5)) AS kode'));

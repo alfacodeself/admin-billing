@@ -38,7 +38,7 @@
                                 <button class="btn btn-block btn-primary mt-4" type="submit">
                                     Kirim Email Verifikasi
                                 </button>
-                                <a href="#" class="float-right mt-2">Forgot Password? </a>
+                                <a href="{{ route('reset-password.email') }}" class="float-right mt-2">Forgot Password? </a>
                             </form>
                         </div>
                     </div>

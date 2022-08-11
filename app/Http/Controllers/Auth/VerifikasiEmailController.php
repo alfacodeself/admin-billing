@@ -19,6 +19,7 @@ class VerifikasiEmailController extends Controller
     {
         return view('app.auth.verifikasi');
     }
+
     public function verify(Request $request)
     {
         $request->validate([
@@ -56,6 +57,7 @@ class VerifikasiEmailController extends Controller
             return back()->with('danger', $th->getMessage());
         }
     }
+
     public function proses_verifikasi($token)
     {
         try {
@@ -64,10 +66,13 @@ class VerifikasiEmailController extends Controller
                 // Tentukan user berdasarkan status pemohon
                 if ($verify->status_pemohon == 'pt') {
                     $user = Petugas::where('id_petugas', $verify->id_pemohon)->first();
+                    $type = "petugas";
                 }elseif ($verify->status_pemohon == 'm') {
                     $user = Mitra::where('id_mitra', $verify->id_pemohon)->first();;
+                    $type = "mitra";
                 }else {
                     $user = Pelanggan::where('id_mitra', $verify->id_pemohon)->first();
+                    $type = "pelanggan";
                 }
                 // Kalau belum verifikasi
                 if ($user->verifikasi_email == null) {

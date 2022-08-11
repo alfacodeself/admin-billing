@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Mitra extends Model
+class Mitra extends Authenticatable implements JWTSubject
 {
     use HasFactory;
     protected $table = 'mitra';
@@ -26,5 +27,22 @@ class Mitra extends Model
     public function detail_bagi_hasil()
     {
         return $this->hasMany(DetailBagiHasil::class, 'id_mitra');
+    }
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+    protected $casts = [
+        'tanggal_verifikasi' => 'datetime',
+    ];
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }

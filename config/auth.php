@@ -46,6 +46,11 @@ return [
             'provider' => 'pelanggans',
             'hash' => false,
         ],
+        'mitra' => [
+            'driver' => 'jwt',
+            'provider' => 'mitras',
+            'hash' => false,
+        ],
     ],
 
     /*
@@ -74,6 +79,10 @@ return [
         'pelanggans' => [
             'driver' => 'eloquent',
             'model' => App\Models\Pelanggan::class,
+        ],
+        'mitras' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Mitra::class,
         ],
     ],
 

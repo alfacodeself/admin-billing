@@ -12,6 +12,7 @@ class VerifikasiEmail extends Mailable
     use Queueable, SerializesModels;
 
     public $user, $token;
+
     public function __construct($user, $token)
     {
         $this->user = $user;

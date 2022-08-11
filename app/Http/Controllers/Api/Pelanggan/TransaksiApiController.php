@@ -81,9 +81,7 @@ class TransaksiApiController extends Controller
     public function detail_transaksi($id_transaksi)
     {
         try {
-            $transaksi = Cache::remember('detail-transaksi', 60*60*24, function() use ($id_transaksi){
-                return Transaksi::with('langganan.pelanggan', 'detail_transaksi')->findOrFail($id_transaksi);
-            });
+            $transaksi = Transaksi::with('langganan.pelanggan', 'detail_transaksi')->findOrFail($id_transaksi);
             if ($transaksi->langganan->pelanggan->id_pelanggan != auth('pelanggan')->id()) {
                 return response()->json([
                     'status' => false,
